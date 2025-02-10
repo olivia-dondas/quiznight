@@ -1,12 +1,4 @@
-**Quiz night**<br>
-Structure globale des branches
-<br>
-• main → Contient la version stable et validée du projet. On ne travaille jamais directement dessus.<br>
-• develop → Contient le code en cours de développement avant d’être validé pour main.<br>
-• feature/_ → Branches pour les nouvelles fonctionnalités.<br>
-• bugfix/_ → Branches pour corriger des bugs en cours de dev.<br>
-• release/_ → Branches pour préparer une version stable.<br>
-• hotfix/_ → Branches pour corriger un bug urgent en production.
+
 
 # Quiz Night 🎉📝🎯
 
@@ -41,7 +33,14 @@ Quiz Night est une plateforme web qui permet aux administrateurs de créer et g�
 │── .gitignore           # Fichiers à exclure de Git
 │── README.md            # Documentation du projet
 ```
-
+Structure globale des branches
+<br>
+• main → Contient la version stable et validée du projet. On ne travaille jamais directement dessus.<br>
+• develop → Contient le code en cours de développement avant d’être validé pour main.<br>
+• feature/_ → Branches pour les nouvelles fonctionnalités.<br>
+• bugfix/_ → Branches pour corriger des bugs en cours de dev.<br>
+• release/_ → Branches pour préparer une version stable.<br>
+• hotfix/_ → Branches pour corriger un bug urgent en production.
 📂💾📜
 
 ## Installation 🛠️⚙️🚀
@@ -65,7 +64,7 @@ Quiz Night est une plateforme web qui permet aux administrateurs de créer et g�
 
 ## Auteurs 🏆👩‍💻👨‍💻
 
-Projet développé par l'équipe **Quiz Night**. 🌟🎉🎭
+Projet développé par l'équipe **Scott, Théo et Oliviat**. 🌟🎉🎭
 
 ---
 
