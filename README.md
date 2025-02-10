@@ -1,2 +1,2 @@
 # quiznight
-Création d'un quiz night 
+Création d'un quiz
