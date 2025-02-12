@@ -4,22 +4,6 @@ ini_set('display_errors', 1);
 
 $config = require('config.php'); 
 
-try {
-    $pdo = new PDO(
-        "mysql:host=" . $config['db_host'] . ";dbname=" . $config['db_name'] . ";charset=utf8mb4", 
-        $config['db_user'], 
-        $config['db_pass'], 
-        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-    );
-
-    echo "Connexion réussie à la base de données !"; 
-} catch (PDOException $e) {
-    die("Erreur de connexion : " . $e->getMessage());
-}
-?>
-
-<?php
-
 // Connexion à la base de données avec PDO
 try {
     $pdo = new PDO(
@@ -32,9 +16,10 @@ try {
 } catch (PDOException $e) {
     die("Erreur de connexion : " . $e->getMessage());
 }
+
 // Récupération des questions et des réponses associées
 $query = "
-    SELECT q.id AS question_id, q.question_txt, a.answer_txt, a.is_true
+    SELECT q.id AS question_id, q.question_txt, a.id AS answer_id, a.answer_txt, a.is_true
     FROM questions q
     JOIN answers a ON q.id = a.question_id
     ORDER BY q.id
@@ -46,7 +31,7 @@ while ($row = $stmt->fetch()) {
     $questionId = $row['question_id'];
     if (!isset($questions[$questionId])) {
         $questions[$questionId] = [
-            'question' => $row['question'],
+            'question' => $row['question_txt'],
             'answers' => []
         ];
     }
@@ -65,12 +50,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $userAnswer = $_POST["question_$questionId"] ?? '';
 
         // Vérifier si la réponse est correcte
-        $stmt = $pdo->prepare("SELECT is_true FROM answers WHERE id = ?");
-        $stmt->execute([$userAnswer]);
-        $isTrue = $stmt->fetchColumn();
+        if ($userAnswer) {
+            $stmt = $pdo->prepare("SELECT is_true FROM answers WHERE id = ?");
+            $stmt->execute([$userAnswer]);
+            $isTrue = $stmt->fetchColumn();
 
-        if ($isTrue) {
-            $score++;
+            if ($isTrue) {
+                $score++;
+            }
         }
     }
 
@@ -138,10 +125,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container">
         <h1>Quiz Night</h1>
         <form method="POST" action="">
-           
-            
-            <button type="submit">Valider les réponses</button>
+            <?php foreach ($questions as $questionId => $question): ?>
+                <div class="question">
+                    <p><strong><?php echo htmlspecialchars($question['question']); ?></strong></p>
+                    <div class="answers">
+                        <?php foreach ($question['answers'] as $answer): ?>
+                            <label>
+                                <input type="radio" name="question_<?php echo $questionId; ?>" value="<?php echo $answer['answer_id']; ?>">
+                                <?php echo htmlspecialchars($answer['answer_txt']); ?>
+                            </label><br>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+            <button type="submit">Soumettre les réponses</button>
         </form>
     </div>
+    <a href="admin.php">Admin</a>
+    <a href="login.php">Login</a>
+    <a href="quiz.php">Quiz</a>
+    <a href="index.php">Accueil</a>
 </body>
 </html>
