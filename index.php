@@ -1,12 +1,6 @@
 <?php
-// Connexion à la base de données
-$dsn = 'mysql:host=localhost;dbname=olivia-dondas_quiznight;charset=utf8mb4';
-$username = 'oliviadondas'; // À ajuster selon ta configuration
-$password = 'kzCFKQbU3N@t9j7';     // À ajuster selon ta configuration
-$options = [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-];
+$config = require('config.php');
+
 
 try {
     $pdo = new PDO($dsn, $username, $password, $options);
