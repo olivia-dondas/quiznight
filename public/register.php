@@ -2,7 +2,7 @@
 <?php
 session_start();
 
-$config = require('config.php');
+$config = require('./config/config.php');
 
 if (isset($_POST['submit'])) {
     try {
