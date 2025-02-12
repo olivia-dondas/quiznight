@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 // Connexion à la base de données
 $dsn = 'mysql:host=localhost;dbname=olivia-dondas_quiznight;charset=utf8mb4';
@@ -61,6 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
+=======
+>>>>>>> 48443ac550d21228660172229196b0113ae35648
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -120,19 +123,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container">
         <h1>Quiz Night</h1>
         <form method="POST" action="">
-            <?php foreach ($questions as $questionId => $question): ?>
-                <div class="question">
-                    <p><strong><?= htmlspecialchars($question['question']) ?></strong></p>
-                    <div class="answers">
-                        <?php foreach ($question['answers'] as $answer): ?>
-                            <label>
-                                <input type="radio" name="question_<?= $questionId ?>" value="<?= $answer['answer_id'] ?>" required>
-                                <?= htmlspecialchars($answer['answer_txt']) ?>
-                            </label><br>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            <?php endforeach; ?>
+           
+            
             <button type="submit">Valider les réponses</button>
         </form>
     </div>
