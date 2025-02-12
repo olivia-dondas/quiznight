@@ -15,7 +15,7 @@
 
     <a href="admin.php">Page admin</a>
     <a href="login.php">Page login</a>
-    <a href="quiz.php">Page quiz</a>
+    <a href="quiz.php">Page Quiz</a>
 
 
 </body>
