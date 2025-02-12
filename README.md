@@ -28,6 +28,7 @@ Quiz Night est une plateforme web qui permet aux administrateurs de créer et g�
 │   ├── Quiz.php     → Classe Quiz
 │── /css             → Fichiers CSS 🎨
 │   ├── styles.css   → Feuille de style
+    ├── global.css   → Feuille de style commune à toutes les pages du site
 │── /sql             → Script pour créer la base de données 🗄️
 │   ├── database.sql
 │── /config          → Fichiers de configuration ⚙️
