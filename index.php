@@ -1,66 +1,3 @@
-<?php
-// Connexion à la base de données
-$dsn = 'mysql:host=localhost;dbname=olivia-dondas_quiznight;charset=utf8mb4';
-$username = 'oliviadondas'; // À ajuster selon ta configuration
-$password = 'kzCFKQbU3N@t9j7';     // À ajuster selon ta configuration
-$options = [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-];
-
-try {
-    $pdo = new PDO($dsn, $username, $password, $options);
-} catch (PDOException $e) {
-    die("Erreur de connexion : " . $e->getMessage());
-}
-
-// Récupération des questions et des réponses associées
-$query = "
-    SELECT q.id AS question_id, q.question, a.id AS answer_id, a.answer_txt, a.is_true
-    FROM questions q
-    JOIN answers a ON q.id = a.question_id
-    ORDER BY q.id
-";
-$stmt = $pdo->query($query);
-
-$questions = [];
-while ($row = $stmt->fetch()) {
-    $questionId = $row['question_id'];
-    if (!isset($questions[$questionId])) {
-        $questions[$questionId] = [
-            'question' => $row['question'],
-            'answers' => []
-        ];
-    }
-    $questions[$questionId]['answers'][] = [
-        'answer_id' => $row['answer_id'],
-        'answer_txt' => $row['answer_txt'],
-    ];
-}
-
-// Traitement de la soumission des réponses (si nécessaire)
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $score = 0;
-    $totalQuestions = count($questions);
-
-    foreach ($questions as $questionId => $question) {
-        $userAnswer = $_POST["question_$questionId"] ?? '';
-
-        // Vérifier si la réponse est correcte
-        $stmt = $pdo->prepare("SELECT is_true FROM answers WHERE id = ?");
-        $stmt->execute([$userAnswer]);
-        $isTrue = $stmt->fetchColumn();
-
-        if ($isTrue) {
-            $score++;
-        }
-    }
-
-    // Affichage du score
-    echo "<div class='result'>Votre score : $score / $totalQuestions</div>";
-}
-?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -120,19 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container">
         <h1>Quiz Night</h1>
         <form method="POST" action="">
-            <?php foreach ($questions as $questionId => $question): ?>
-                <div class="question">
-                    <p><strong><?= htmlspecialchars($question['question']) ?></strong></p>
-                    <div class="answers">
-                        <?php foreach ($question['answers'] as $answer): ?>
-                            <label>
-                                <input type="radio" name="question_<?= $questionId ?>" value="<?= $answer['answer_id'] ?>" required>
-                                <?= htmlspecialchars($answer['answer_txt']) ?>
-                            </label><br>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            <?php endforeach; ?>
+           
+            
             <button type="submit">Valider les réponses</button>
         </form>
     </div>
