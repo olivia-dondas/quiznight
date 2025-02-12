@@ -4,6 +4,8 @@ session_start();
 
 $config = require('./config/config.php');
 
+echo "Test : la page s'affiche correctement";
+
 if (isset($_POST['submit'])) {
     try {
         // Vérifier si les champs sont remplis
