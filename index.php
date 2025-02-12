@@ -1,13 +1,6 @@
-<<<<<<< HEAD
 <?php
 // Connexion à la base de données
-$dsn = 'mysql:host=localhost;dbname=olivia-dondas_quiznight;charset=utf8mb4';
-$username = 'oliviadondas'; // À ajuster selon ta configuration
-$password = 'kzCFKQbU3N@t9j7';     // À ajuster selon ta configuration
-$options = [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-];
+$config = require('config.php'); 
 
 try {
     $pdo = new PDO("mysql:host=" . $config['db_host'] . ";dbname=" . $config['db_name'] . ";charset=utf8mb4", $config['db_user'], $config['db_pass']);  
@@ -62,8 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-=======
->>>>>>> 48443ac550d21228660172229196b0113ae35648
 <!DOCTYPE html>
 <html lang="fr">
 <head>
