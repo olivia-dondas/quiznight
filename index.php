@@ -141,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit">Soumettre les réponses</button>
         </form>
     </div>
-    <a href="/public/admin.php">Admin</a>
+    <a href="../public/admin.php">Admin</a>
     <a href="login.php">Login</a>
     <a href="quiz.php">Quiz</a>
     <a href="index.php">Accueil</a>
