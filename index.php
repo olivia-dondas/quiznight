@@ -20,11 +20,21 @@ try {
 
 <?php
 
-
-
+// Connexion à la base de données avec PDO
+try {
+    $pdo = new PDO(
+        "mysql:host={$config['db_host']};dbname={$config['db_name']};charset=utf8mb4",
+        $config['db_user'],
+        $config['db_pass']
+    );
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "Connexion réussie à la base de données !\n";
+} catch (PDOException $e) {
+    die("Erreur de connexion : " . $e->getMessage());
+}
 // Récupération des questions et des réponses associées
 $query = "
-    SELECT q.id AS question_id, q.question, a.id AS answer_id, a.answer_txt, a.is_true
+    SELECT q.id AS question_id, q.question_txt, a.answer_txt, a.is_true
     FROM questions q
     JOIN answers a ON q.id = a.question_id
     ORDER BY q.id
