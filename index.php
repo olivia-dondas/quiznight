@@ -1,36 +1,63 @@
 <?php
-// Classe User pour gérer les utilisateurs
-class User {
-    private string $pseudo;
+// Connexion à la base de données
+$dsn = 'mysql:host=localhost;dbname=olivia-dondas_quiznight;charset=utf8mb4';
+$username = 'oliviadondas'; // À ajuster selon ta configuration
+$password = 'kzCFKQbU3N@t9j7';     // À ajuster selon ta configuration
+$options = [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+];
 
-    public function __construct(string $pseudo) {
-        $this->setPseudo($pseudo);
-    }
-
-    public function getPseudo(): string {
-        return $this->pseudo;
-    }
-
-    public function setPseudo(string $pseudo): void {
-        if (empty($pseudo)) {
-            throw new Exception("Le pseudo ne peut pas être vide.");
-        }
-        $this->pseudo = htmlspecialchars($pseudo, ENT_QUOTES, 'UTF-8');
-    }
+try {
+    $pdo = new PDO($dsn, $username, $password, $options);
+} catch (PDOException $e) {
+    die("Erreur de connexion : " . $e->getMessage());
 }
 
-// Gestion de la soumission du formulaire
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        $pseudo = $_POST['pseudo'] ?? '';
-        $user = new User($pseudo);
+// Récupération des questions et des réponses associées
+$query = "
+    SELECT q.id AS question_id, q.question, a.id AS answer_id, a.answer_txt, a.is_true
+    FROM questions q
+    JOIN answers a ON q.id = a.question_id
+    ORDER BY q.id
+";
+$stmt = $pdo->query($query);
 
-        // Redirection vers la page du quiz
-        header("Location: quiz.php?pseudo=" . urlencode($user->getPseudo()));
-        exit();
-    } catch (Exception $e) {
-        $error = $e->getMessage();
+$questions = [];
+while ($row = $stmt->fetch()) {
+    $questionId = $row['question_id'];
+    if (!isset($questions[$questionId])) {
+        $questions[$questionId] = [
+            'question' => $row['question'],
+            'answers' => []
+        ];
     }
+    $questions[$questionId]['answers'][] = [
+        'answer_id' => $row['answer_id'],
+        'answer_txt' => $row['answer_txt'],
+    ];
+}
+
+// Traitement de la soumission des réponses (si nécessaire)
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $score = 0;
+    $totalQuestions = count($questions);
+
+    foreach ($questions as $questionId => $question) {
+        $userAnswer = $_POST["question_$questionId"] ?? '';
+
+        // Vérifier si la réponse est correcte
+        $stmt = $pdo->prepare("SELECT is_true FROM answers WHERE id = ?");
+        $stmt->execute([$userAnswer]);
+        $isTrue = $stmt->fetchColumn();
+
+        if ($isTrue) {
+            $score++;
+        }
+    }
+
+    // Affichage du score
+    echo "<div class='result'>Votre score : $score / $totalQuestions</div>";
 }
 ?>
 
@@ -39,38 +66,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Night - Entrée</title>
+    <title>Quiz Night</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f8ff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            padding: 2rem;
             margin: 0;
         }
         .container {
+            max-width: 800px;
+            margin: 0 auto;
             background-color: #ffffff;
+            padding: 2rem;
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            text-align: center;
-            max-width: 400px;
-            width: 100%;
         }
         h1 {
+            text-align: center;
             color: #333;
-            font-size: 24px;
-            margin-bottom: 1rem;
+            margin-bottom: 2rem;
         }
-        input[type="text"] {
-            width: 100%;
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 16px;
+        .question {
+            margin-bottom: 2rem;
+        }
+        .answers {
+            margin-top: 1rem;
         }
         button {
             background-color: #007bff;
@@ -80,25 +101,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-radius: 8px;
             font-size: 16px;
             cursor: pointer;
+            width: 100%;
+            margin-top: 1rem;
         }
         button:hover {
             background-color: #0056b3;
         }
-        .error {
-            color: #d9534f;
-            margin-bottom: 1rem;
+        .result {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 1rem;
+            color: #28a745;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Bienvenue sur Quiz Night</h1>
+        <h1>Quiz Night</h1>
         <form method="POST" action="">
-            <?php if (isset($error)): ?>
-                <div class="error">Erreur : <?= $error ?></div>
-            <?php endif; ?>
-            <input type="text" name="pseudo" placeholder="Entrez votre pseudo" required>
-            <button type="submit">Commencer le quiz</button>
+            <?php foreach ($questions as $questionId => $question): ?>
+                <div class="question">
+                    <p><strong><?= htmlspecialchars($question['question']) ?></strong></p>
+                    <div class="answers">
+                        <?php foreach ($question['answers'] as $answer): ?>
+                            <label>
+                                <input type="radio" name="question_<?= $questionId ?>" value="<?= $answer['answer_id'] ?>" required>
+                                <?= htmlspecialchars($answer['answer_txt']) ?>
+                            </label><br>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+            <button type="submit">Valider les réponses</button>
         </form>
     </div>
 </body>
