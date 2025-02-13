@@ -1,3 +1,3 @@
 <?php
-header("Location: public/home.php");
+header("Location: public/quiz.php");
 exit;
