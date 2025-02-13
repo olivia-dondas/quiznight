@@ -31,8 +31,8 @@ if (isset($_POST['submit'])) {
 
         if ($user && password_verify($_POST['password'], $user['password'])) {
             // Connexion réussie
-            $_SESSION['admin_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
+            $_SESSION['admin_id'] = $admin['id'];
+            $_SESSION['name'] = $admin['name'];
             header("Location: dashboard.php");
             exit();
         } else {
