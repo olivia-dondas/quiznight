@@ -6,7 +6,7 @@ class Database {
         // Vérifier si la connexion existe déjà
         if ($this->conn == null) {
             // Charger les configurations depuis config.php
-            $config = include('config/config.php');
+            $config = include('../config/config.php');
             
             // Extraire les informations de connexion
             $host = $config['db_host'];

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:3306
--- Généré le : jeu. 13 fév. 2025 à 22:59
+-- Généré le : jeu. 13 fév. 2025 à 23:51
 -- Version du serveur : 5.5.68-MariaDB
 -- Version de PHP : 7.4.30
 
@@ -136,10 +136,10 @@ CREATE TABLE `topic` (
 --
 
 INSERT INTO `topic` (`id`, `name`, `description`, `image`) VALUES
-(1, 'Sport', 'Questions sur le sport et ses légendes.', ''),
-(2, 'Jeux Vidéo', 'Quiz sur les jeux vidéo et leur histoire.', ''),
-(3, 'Cinéma', 'Questions sur les films et réalisateurs cultes.', ''),
-(4, 'Musique', 'Testez vos connaissances musicales.', '');
+(1, 'Sport', 'Questions sur le sport et ses légendes.', 'assets/topics/sport.png'),
+(2, 'Jeux Vidéo', 'Quiz sur les jeux vidéo et leur histoire.', 'assets/topics/jeux-video.png'),
+(3, 'Cinéma', 'Questions sur les films et réalisateurs cultes.', 'assets/topics/cinema.png'),
+(4, 'Musique', 'Testez vos connaissances musicales.', 'assets/topics/musique.png');
 
 --
 -- Index pour les tables déchargées
