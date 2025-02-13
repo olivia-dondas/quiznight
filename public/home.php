@@ -75,7 +75,8 @@ $topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <a href="quiz.php">Quiz</a>
     <a href="index.php">Accueil</a>
     <a href="public/home.php">Accueil</a>
-    <a href="/public/register.php">Inscription pour admin</a>    
+    <a href="/public/register.php">Inscription pour admin</a>
+    <a href="../test/topic.php">Test Topic</a>
 
 </body>
 
