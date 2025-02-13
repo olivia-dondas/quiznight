@@ -2,7 +2,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$config = require('../config/config.php'); 
+$config = require("../config/config.php"); 
 
 // Connexion à la base de données avec PDO
 try {
@@ -16,7 +16,13 @@ try {
 } catch (PDOException $e) {
     die("Erreur de connexion : " . $e->getMessage());
 }
+
+$query = "SELECT id, name, description FROM topic";
+$stmt = $pdo->query($query);
+$topics = $stmt->fetchAll(PDO::FETCH_ASSOC); 
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="fr">
