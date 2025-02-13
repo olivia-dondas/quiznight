@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 $config = require('config/config.php'); 
-
+var_dump(file_exists('config/config.php'));  // Affiche true si le fichier existe
 // Connexion à la base de données avec PDO
 try {
     $pdo = new PDO(
