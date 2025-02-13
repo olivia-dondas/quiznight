@@ -61,7 +61,9 @@ if (isset($_POST['submit'])) {
         <img src="images/logo.png" alt="logo" class="logo1">
     </header>
     <section class="allcontainer">
-       
+        <aside class="logo2">
+            <img src="images/logo.png" alt="logo" class="logo2">
+        </aside>
         <section class="container">
             <h2>QuizNite</h2>
             <h3>Inscription</h3>
