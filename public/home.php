@@ -70,6 +70,13 @@ $topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <a href="./quizzes/jeux-videos.html">Commencer le Quiz</a>
     </section>
 
+    <a href="./public/admin.php">Admin</a>
+    <a href="login.php">Login</a>
+    <a href="quiz.php">Quiz</a>
+    <a href="index.php">Accueil</a>
+    <a href="public/home.php">Accueil</a>
+    <a href="/public/register.php">Inscription pour admin</a>    
+
 </body>
 
 </html>
