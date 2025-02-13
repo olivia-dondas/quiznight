@@ -3,6 +3,7 @@
 session_start();
 
 $config = require('./config/config.php');
+var_dump($config);
 
 echo "Test : la page s'affiche correctement";
 
