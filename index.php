@@ -2,7 +2,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$config = require('./config/config.php'); 
+$config = require('config/config.php'); 
 
 // Connexion à la base de données avec PDO
 try {
