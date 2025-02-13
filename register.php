@@ -1,7 +1,11 @@
 
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 $config = require('config.php');
 var_dump($config);
+
+
 
 if (isset($_POST['submit'])) {
     try {
