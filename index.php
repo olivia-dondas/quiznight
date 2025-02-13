@@ -2,7 +2,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$config = require('config.php'); 
+$config = require('config/config.php'); 
 
 // Connexion à la base de données avec PDO
 try {
@@ -141,9 +141,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit">Soumettre les réponses</button>
         </form>
     </div>
-    <a href="/public/admin.php">Admin</a>
+    <a href="./public/admin.php">Admin</a>
     <a href="login.php">Login</a>
     <a href="quiz.php">Quiz</a>
     <a href="index.php">Accueil</a>
+    <a href="/public/register.php">Inscription pour admin</a>
 </body>
 </html>

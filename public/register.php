@@ -1,6 +1,11 @@
 
 <?php
-$config = require('config.php');
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+$config = require('../config/config.php');
+var_dump($config);
+
+
 
 if (isset($_POST['submit'])) {
     try {
@@ -18,8 +23,8 @@ if (isset($_POST['submit'])) {
         $hashedPassword = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
         // Préparer et exécuter la requête d'insertion
-        $query = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
-        $query->bindValue(':name', $_POST['name'], PDO::PARAM_STR);
+        $query = $pdo->prepare("INSERT INTO users (username, password) VALUES (:username, :password)");
+        $query->bindValue(':username', $_POST['username'], PDO::PARAM_STR);
         $query->bindValue(':password', $hashedPassword, PDO::PARAM_STR);
 
         $query->execute();
@@ -70,8 +75,7 @@ if (isset($_POST['submit'])) {
             ?>
 
             <form action="" method="POST">
-                <input type="text" name="name" placeholder="Nom" required>
-                <input type="email" name="email" placeholder="Email" required>
+                <input type="text" name="username" placeholder="Nom" required>
                 <input type="password" name="password" placeholder="Mot de passe" required>
                 <button type="submit" name="submit">S'inscrire</button>
                 <p>Déjà inscrit ? <a href="login.php">Se connecter</a></p>
