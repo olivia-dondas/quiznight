@@ -145,6 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <a href="login.php">Login</a>
     <a href="quiz.php">Quiz</a>
     <a href="index.php">Accueil</a>
+    <a href="public/"
     <a href="/public/register.php">Inscription pour admin</a>
 </body>
 </html>
