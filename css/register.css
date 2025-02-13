@@ -1,0 +1,151 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.allcontainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box; /* Assure que le padding est inclus dans la largeur totale */
+  flex-wrap: wrap; /* Permet aux éléments de se déplacer sur la ligne suivante si nécessaire */
+}
+
+.container {
+  background: white;
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+  margin: 10px; /* Ajoute un espacement autour de chaque conteneur */
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box; /* Assure que le padding est inclus dans la largeur totale */
+}
+
+button {
+  background-color: #101720;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
+
+button:hover {
+  background-color: rgb(240, 181, 221);
+}
+
+p {
+  margin-top: 15px;
+}
+
+a {
+  color: #101720;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.logo1 {
+  text-align: center;
+  height: auto;
+  max-width: 120px;
+  margin-top: 0px;
+}
+
+.logo2 {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  margin-left: 40px;
+}
+
+.h2 {
+  font-family: "patriot", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.header,
+.footer {
+  font-weight: 200;
+  font-style: normal;
+  width: 100%;
+  background-color: #e59710;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+  position: fixed;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  box-sizing: border-box;
+  min-height: 60px;
+}
+
+.header {
+  top: 0;
+  height: 10vh;
+}
+
+.footer {
+  bottom: 0;
+  margin-top: 20px;
+  height: 25px;
+}
+
+h2 {
+  font-family: Patriot;
+}
+/* Media Queries */
+@media (max-width: 768px) {
+  .allcontainer {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .logo2 {
+    width: 80%;
+    margin: 20px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    width: 90%;
+    margin: 10px auto;
+  }
+
+  .logo2 {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .header,
+  .footer {
+    padding: 10px 0;
+  }
+}
