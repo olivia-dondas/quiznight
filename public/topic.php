@@ -1,9 +1,10 @@
 <?php
 
-// Inclure les classes avec un chemin absolu
+// Définir le chemin absolu vers les fichiers de modèles
 $databaseFile = __DIR__ . '/../models/Database.php';
 $topicFile = __DIR__ . '/../models/Topic.php';
 
+// Vérifier si les fichiers existent avant de les inclure
 if (!file_exists($databaseFile) || !file_exists($topicFile)) {
     die("Erreur : Impossible de charger les fichiers requis.");
 }
@@ -28,7 +29,7 @@ $topics = $topic->getAllTopics();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Night - Thèmes</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="styles.css"> <!-- Vérifie le chemin vers styles.css -->
 </head>
 <body>
 
