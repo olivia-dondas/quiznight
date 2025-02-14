@@ -1,3 +1,6 @@
+<<<<<<< HEAD:public/test.php
+echo "test";
+=======
 <?php
 // Affichage des erreurs pour le débogage
 ini_set('display_errors', 1);
@@ -37,3 +40,4 @@ if (count($answersList) > 0) {
     echo "Aucune réponse disponible.";
 }
 ?>
+>>>>>>> b7778a41c726d3002d7be406056b63cc1f49b75f:pages/test.php
