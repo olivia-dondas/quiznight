@@ -1,50 +1,48 @@
 
 <?php
-session_start();
-
-$config = require('./config/config.php');
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+$config = require('../config/config.php');
 var_dump($config);
 
-echo "Test : la page s'affiche correctement";
+
 
 if (isset($_POST['submit'])) {
     try {
         // Vérifier si les champs sont remplis
-        if (empty($_POST['username']) || empty($_POST['password'])) {
-            header("Location: login.php?error=" . urlencode("Tous les champs sont obligatoires !"));
+        if (empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password'])) {
+            header("Location: connection.html?error=Tous les champs sont obligatoires !");
             exit();
         }
 
         // Connexion à la base de données
-        $pdo = new PDO(
-            "mysql:host=" . $config['db_host'] . ";dbname=" . $config['db_name'] . ";charset=utf8mb4",
-            $config['db_user'],
-            $config['db_pass'],
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-        );
+        $pdo = new PDO("mysql:host=" . $config['db_host'] . ";dbname=" . $config['db_name'] . ";charset=utf8mb4", $config['db_user'], $config['db_pass']);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        // Vérifier si l'utilisateur existe
-        $query = $pdo->prepare("SELECT * FROM admin WHERE username = :username");
+        // Hacher le mot de passe
+        $hashedPassword = password_hash($_POST['password'], PASSWORD_BCRYPT);
+
+        // Préparer et exécuter la requête d'insertion
+        $query = $pdo->prepare("INSERT INTO users (username, password) VALUES (:username, :password)");
         $query->bindValue(':username', $_POST['username'], PDO::PARAM_STR);
-        $query->execute();
-        $user = $query->fetch(PDO::FETCH_ASSOC);
+        $query->bindValue(':password', $hashedPassword, PDO::PARAM_STR);
 
-        if ($user && password_verify($_POST['password'], $user['password'])) {
-            // Connexion réussie
-            $_SESSION['admin_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            header("Location: dashboard.php");
-            exit();
-        } else {
-            header("Location: login.php?error=" . urlencode("Nom d'utilisateur ou mot de passe incorrect."));
-            exit();
-        }
+        $query->execute();
+
+        // Redirection vers la page de connexion après inscription réussie
+        header("Location: login.php?success=Inscription réussie ! Vous pouvez maintenant vous connecter.");
+        exit();
     } catch (PDOException $e) {
-        header("Location: login.php?error=" . urlencode("Erreur de base de données : " . $e->getMessage()));
+        $_SESSION['error'] = "Erreur de base de données :" . $e->getMessage();
+        header("Location: login.php?error=Erreur de base de données: " . urlencode($e->getMessage()));
         exit();
     }
 }
+
+
+
 ?>
+
 
 
 <!DOCTYPE html>
@@ -77,7 +75,7 @@ if (isset($_POST['submit'])) {
             ?>
 
             <form action="" method="POST">
-                <input type="text" name="name" placeholder="Nom" required>
+                <input type="text" name="username" placeholder="Nom" required>
                 <input type="password" name="password" placeholder="Mot de passe" required>
                 <button type="submit" name="submit">S'inscrire</button>
                 <p>Déjà inscrit ? <a href="login.php">Se connecter</a></p>
