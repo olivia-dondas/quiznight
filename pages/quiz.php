@@ -2,8 +2,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$config = require('config/config.php'); 
-
+$config = require('../config/config.php'); 
+var_dump(file_exists('config/config.php'));  // Affiche true si le fichier existe
 // Connexion à la base de données avec PDO
 try {
     $pdo = new PDO(
@@ -145,6 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <a href="login.php">Login</a>
     <a href="quiz.php">Quiz</a>
     <a href="index.php">Accueil</a>
+    <a href="public/home.php">Accueil</a>
     <a href="/public/register.php">Inscription pour admin</a>
 </body>
 </html>

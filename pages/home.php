@@ -2,7 +2,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$config = require('config.php'); 
+$config = require("../config/config.php"); 
 
 // Connexion à la base de données avec PDO
 try {
@@ -16,7 +16,13 @@ try {
 } catch (PDOException $e) {
     die("Erreur de connexion : " . $e->getMessage());
 }
+
+$query = "SELECT id, name, description FROM topic";
+$stmt = $pdo->query($query);
+$topics = $stmt->fetchAll(PDO::FETCH_ASSOC); 
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -24,8 +30,8 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuizNight</title>
-    <link rel="stylesheet" href="accueil.css">
+    <title>QuizNite</title>
+    <link rel="stylesheet" href="../css/home.css">
 </head>
 
 <body>
@@ -63,6 +69,14 @@ try {
         <p>Êtes-vous un gamer ? Prouvez-le en répondant à des questions sur les jeux vidéo et leur histoire.</p>
         <a href="./quizzes/jeux-videos.html">Commencer le Quiz</a>
     </section>
+
+    <a href="./public/admin.php">Admin</a>
+    <a href="login.php">Login</a>
+    <a href="quiz.php">Quiz</a>
+    <a href="index.php">Accueil</a>
+    <a href="public/home.php">Accueil</a>
+    <a href="/public/register.php">Inscription pour admin</a>
+    <a href="../test/topic.php">Test Topic</a>
 
 </body>
 
