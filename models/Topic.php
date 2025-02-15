@@ -22,5 +22,15 @@ class Topic {
             die("Erreur lors de la récupération des sujets : " . $e->getMessage());
         }
     }
+
+    public function getTopicById($id) {
+        $query = "SELECT id, name, description, image FROM " . $this->table . " WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+ 
 }
 ?>
