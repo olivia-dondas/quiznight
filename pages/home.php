@@ -11,7 +11,7 @@ $database = new Database();
 $pdo = $database->getConnection();
 
 // Récupérer tous les topics
-$query = "SELECT id, name, description FROM topic";
+$query = "SELECT id, name, description, image FROM topic";
 $stmt = $pdo->query($query);
 $topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -30,7 +30,7 @@ $topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <header>
         <h1>Bienvenue sur QuizNight</h1>
-        <img src="assets/QuizNite.jpeg" alt="Logo QuizNite">
+        <img src="../assets/QuizNite.jpeg" alt="Logo QuizNite">
         <p>Testez vos connaissances sur différents thèmes et amusez-vous avec nos quiz interactifs !</p>
     </header>
 
@@ -40,6 +40,7 @@ $topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="topic">
                 <h3><?php echo htmlspecialchars($topic['name']); ?></h3>
                 <p><?php echo htmlspecialchars($topic['description']); ?></p>
+                <img src="<?php echo htmlspecialchars($topic['image']); ?>" alt="<?php echo htmlspecialchars($topic['name']); ?>">
                 <a href="./topic.php?id=<?php echo $topic['id']; ?>">Commencer le Quiz</a>
             </div>
         <?php endforeach; ?>

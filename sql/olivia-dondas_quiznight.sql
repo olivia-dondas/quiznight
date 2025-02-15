@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.3
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost:3306
--- Généré le : jeu. 13 fév. 2025 à 23:51
--- Version du serveur : 5.5.68-MariaDB
--- Version de PHP : 7.4.30
+-- Hôte : localhost:8889
+-- Généré le : sam. 15 fév. 2025 à 11:57
+-- Version du serveur : 8.0.40
+-- Version de PHP : 8.3.14
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,11 +28,11 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `admin` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `created_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `admin`
@@ -48,11 +48,11 @@ INSERT INTO `admin` (`id`, `username`, `password`, `created_at`) VALUES
 --
 
 CREATE TABLE `answers` (
-  `id` int(11) NOT NULL,
-  `question_id` int(11) NOT NULL,
+  `id` int NOT NULL,
+  `question_id` int NOT NULL,
   `answer_txt` varchar(255) NOT NULL,
   `is_true` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `answers`
@@ -90,7 +90,13 @@ INSERT INTO `answers` (`id`, `question_id`, `answer_txt`, `is_true`) VALUES
 (29, 8, 'Michael Jackson', 1),
 (30, 8, 'Elvis Presley', 0),
 (31, 8, 'Prince', 0),
-(32, 8, 'Madonna', 0);
+(32, 8, 'Madonna', 0),
+(33, 9, 'Scott ', 1),
+(34, 9, 'Marvin', 0),
+(35, 9, 'Théo', 0),
+(36, 9, 'Théo', 0),
+(37, 9, 'Olive', 0),
+(38, 9, 'Olive', 0);
 
 -- --------------------------------------------------------
 
@@ -99,10 +105,10 @@ INSERT INTO `answers` (`id`, `question_id`, `answer_txt`, `is_true`) VALUES
 --
 
 CREATE TABLE `questions` (
-  `id` int(11) NOT NULL,
-  `topic_id` int(11) NOT NULL,
+  `id` int NOT NULL,
+  `topic_id` int NOT NULL,
   `question_txt` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `questions`
@@ -116,7 +122,8 @@ INSERT INTO `questions` (`id`, `topic_id`, `question_txt`) VALUES
 (5, 3, 'Quel film a remporté l\'Oscar du meilleur film en 1994 ?'),
 (6, 3, 'Quel réalisateur a dirigé \"Inception\" ?'),
 (7, 4, 'Quel groupe a chanté \"Bohemian Rhapsody\" ?'),
-(8, 4, 'Qui est le roi de la pop ?');
+(8, 4, 'Qui est le roi de la pop ?'),
+(9, 1, 'qui est le champion de lancer de caca ?');
 
 -- --------------------------------------------------------
 
@@ -125,21 +132,21 @@ INSERT INTO `questions` (`id`, `topic_id`, `question_txt`) VALUES
 --
 
 CREATE TABLE `topic` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `name` varchar(255) NOT NULL,
   `description` text NOT NULL,
   `image` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `topic`
 --
 
 INSERT INTO `topic` (`id`, `name`, `description`, `image`) VALUES
-(1, 'Sport', 'Questions sur le sport et ses légendes.', 'assets/topics/sport.png'),
-(2, 'Jeux Vidéo', 'Quiz sur les jeux vidéo et leur histoire.', 'assets/topics/jeux-video.png'),
-(3, 'Cinéma', 'Questions sur les films et réalisateurs cultes.', 'assets/topics/cinema.png'),
-(4, 'Musique', 'Testez vos connaissances musicales.', 'assets/topics/musique.png');
+(1, 'Sport', 'Questions sur le sport et ses légendes.', '../assets/topics/sport.png'),
+(2, 'Jeux Vidéo', 'Quiz sur les jeux vidéo et leur histoire.', '../assets/topics/videogame.png'),
+(3, 'Cinéma', 'Questions sur les films et réalisateurs cultes.', '../assets/topics/movie.png'),
+(4, 'Musique', 'Testez vos connaissances musicales.', '../assets/topics/music.png');
 
 --
 -- Index pour les tables déchargées
@@ -179,25 +186,25 @@ ALTER TABLE `topic`
 -- AUTO_INCREMENT pour la table `admin`
 --
 ALTER TABLE `admin`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT pour la table `answers`
 --
 ALTER TABLE `answers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT pour la table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT pour la table `topic`
 --
 ALTER TABLE `topic`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Contraintes pour les tables déchargées
