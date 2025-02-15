@@ -6,7 +6,7 @@ class Database {
     private $host = 'localhost';
     private $db_name = 'olivia-dondas_quiznight';
     private $username = 'root';
-    private $password = '';
+    private $password = 'root';
     public $conn;
 
     public function getConnection() {
