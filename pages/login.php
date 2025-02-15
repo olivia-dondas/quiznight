@@ -88,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .play-section {
-            background-color: #007bff;
+            background-color:rgb(255, 255, 255);
             color: white;
             padding: 40px;
             display: flex;
@@ -104,7 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .play-section button {
-            background-color: #ffcc00;
+            background-color: #fa25cb;
             border: none;
             padding: 10px 20px;
             font-size: 18px;
@@ -114,7 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .play-section button:hover {
-            background-color: #e6b800;
+            background-color:rgb(50, 0, 230);
         }
 
         .login-section {
@@ -145,7 +145,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .login-section button {
-            background-color: #007bff;
+            background-color: #fa25cb;
             color: white;
             border: none;
             padding: 10px;
