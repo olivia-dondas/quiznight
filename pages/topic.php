@@ -1,53 +1,80 @@
 <?php
+// pages/topic.php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// Définir le chemin absolu vers les fichiers de modèles
-$databaseFile = __DIR__ . '/../models/Database.php';
-$topicFile = __DIR__ . '/../models/Topic.php';
+// Inclure les fichiers des classes
+require_once __DIR__ . '/../models/Database.php';
+require_once __DIR__ . '/../models/Topic.php';
+require_once __DIR__ . '/../models/Questions.php';
+require_once __DIR__ . '/../models/Answers.php';
 
-// Vérifier si les fichiers existent avant de les inclure
-if (!file_exists($databaseFile) || !file_exists($topicFile)) {
-    die("Erreur : Impossible de charger les fichiers requis.");
+// Connexion à la base de données
+$database = new Database();
+$pdo = $database->getConnection();
+
+// Récupérer l'ID du thème depuis l'URL
+if (!isset($_GET['id'])) {
+    die("ID du thème non spécifié.");
+}
+$topic_id = $_GET['id'];
+
+// Récupérer les informations du thème
+$topic = new Topic($pdo);
+$topic_data = $topic->getTopicById($topic_id);
+
+if (!$topic_data) {
+    die("Thème non trouvé.");
 }
 
-require_once $databaseFile;
-require_once $topicFile;
+// Récupérer les questions du thème
+$question = new Question($pdo);
+$questions = $question->getQuestionsByTopicId($topic_id);
 
-// Créer une instance de la connexion à la base de données
-$db = new Database();
-$conn = $db->getConnection();
-
-// Créer une instance de la classe Topic
-$topic = new Topic($conn);
-
-// Récupérer tous les thèmes
-$topics = $topic->getAllTopics();
+// Récupérer les réponses pour chaque question
+$answer = new Answers($pdo);
+foreach ($questions as &$q) {
+    $q['answers'] = $answer->getAnswersByQuestionId($q['id']);
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Night - Thèmes</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Vérifie le chemin vers styles.css -->
+    <title>Quiz - <?php echo htmlspecialchars($topic_data['name']); ?></title>
+    <link rel="stylesheet" href="../css/quiz.css">
 </head>
+
 <body>
 
-    <h1>Les Thèmes du Quiz</h1>
+    <header>
+        <h1><?php echo htmlspecialchars($topic_data['name']); ?></h1>
+        <img src="<?php echo htmlspecialchars($topic_data['image']); ?>" alt="<?php echo htmlspecialchars($topic_data['name']); ?>">
+        <p><?php echo htmlspecialchars($topic_data['description']); ?></p>
+    </header>
 
-    <?php if (!empty($topics)): ?>
-        <div class="topics-container">
-            <?php foreach ($topics as $theme): ?>
-                <div class="topic">
-                    <h2><?php echo htmlspecialchars($theme['name']); ?></h2>
-                    <p><?php echo htmlspecialchars($theme['description']); ?></p>
-                    <img src="<?php echo htmlspecialchars($theme['image']); ?>" alt="Image du thème">
+    <section id="quiz">
+        <form action="submit_quiz.php" method="post">
+            <?php foreach ($questions as $question) : ?>
+                <div class="question">
+                    <h3><?php echo htmlspecialchars($question['question_txt']); ?></h3>
+                    <ul>
+                        <?php foreach ($question['answers'] as $answer) : ?>
+                            <li>
+                                <input type="radio" name="question_<?php echo $question['id']; ?>" value="<?php echo $answer['id']; ?>" required>
+                                <?php echo htmlspecialchars($answer['answer_txt']); ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
                 </div>
             <?php endforeach; ?>
-        </div>
-    <?php else: ?>
-        <p>Aucun thème disponible.</p>
-    <?php endif; ?>
+            <button type="submit">Soumettre le Quiz</button>
+        </form>
+    </section>
 
 </body>
+
 </html>
