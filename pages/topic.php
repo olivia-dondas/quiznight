@@ -45,7 +45,7 @@ foreach ($questions as &$q) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz - <?php echo htmlspecialchars($topic_data['name']); ?></title>
-    <link rel="stylesheet" href="../css/quiz.css">
+    <link rel="stylesheet" href="../css/topic.css">
 </head>
 
 <body>
