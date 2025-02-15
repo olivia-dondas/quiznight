@@ -40,18 +40,18 @@ $topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="topic">
                 <h3><?php echo htmlspecialchars($topic['name']); ?></h3>
                 <p><?php echo htmlspecialchars($topic['description']); ?></p>
-                <a href="./quizzes/topic_<?php echo $topic['id']; ?>.html">Commencer le Quiz</a>
+                <a href="./topic.php?id=<?php echo $topic['id']; ?>">Commencer le Quiz</a>
             </div>
         <?php endforeach; ?>
     </section>
 
     <nav>
-        <a href="./pages/admin.php">Admin</a>
-        <a href="./pages/login.php">Login</a>
-        <a href="./pages/quiz.php">Quiz</a>
+        <a href="/pages/admin.php">Admin</a>
+        <a href="/pages/login.php">Login</a>
+        <a href="/pages/quiz.php">Quiz</a>
         <a href="./index.php">Accueil</a>
-        <a href="./pages/register.php">Inscription pour admin</a>
-        <a href="./pages/topic.php">Test Topic</a>
+        <a href="./register.php">Inscription pour admin</a>
+       
     </nav>
 
 </body>
