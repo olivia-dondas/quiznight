@@ -2,7 +2,6 @@
 class Answers {
     private $conn;
     private $table = 'answers';
-    private $pdo;
 
     // Propriétés de la réponse
     public $id;
@@ -11,7 +10,7 @@ class Answers {
     public $is_true;
 
     public function __construct($db) {
-        $this->conn = $db;
+        $this->conn = $db;  // Connexion PDO
     }
 
     // Méthode pour récupérer toutes les réponses
@@ -39,14 +38,18 @@ class Answers {
             die("Erreur lors de l'ajout de la réponse : " . $e->getMessage());
         }
     }
-    // Ajoute cette méthode si elle n'existe pas
-    public function getAnswersByQuestionId($question_id)
-    {
-        $query = "SELECT * FROM answers WHERE question_id = :question_id";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->bindParam(':question_id', $question_id, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Récupérer les réponses par ID de question
+    public function getAnswersByQuestionId($question_id) {
+        try {
+            $query = "SELECT * FROM " . $this->table . " WHERE question_id = :question_id";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':question_id', $question_id, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            die("Erreur lors de la récupération des réponses par question ID : " . $e->getMessage());
+        }
     }
 }
 ?>
