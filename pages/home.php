@@ -47,8 +47,8 @@ $topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </section>
 
     <nav>
-        <a href="/pages/admin.php">Admin</a>
-        <a href="/pages/login.php">Login</a>
+        <a href="./pages/admin.php">Admin</a>
+        <a href="./pages/login.php">Login</a>
         <a href="/pages/quiz.php">Quiz</a>
         <a href="./index.php">Accueil</a>
         <a href="./register.php">Inscription pour admin</a>
