@@ -1,10 +1,9 @@
 <?php
-// crud.php
-
 // Affichage des erreurs pour le débogage
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
+// Inclure les fichiers de modèle
 require_once __DIR__ . '/../models/Database.php';
 require_once __DIR__ . '/../models/Topic.php';
 require_once __DIR__ . '/../models/Questions.php';
@@ -16,23 +15,44 @@ $db = $database->getConnection();
 $question = new Question($db);
 $answers = new Answers($db);
 
-// Récupérer tous les topics et questions
-$all_topics = $db->query("SELECT id, name FROM topic")->fetchAll(PDO::FETCH_ASSOC);
-$all_questions = $db->query("SELECT id, question_txt FROM questions")->fetchAll(PDO::FETCH_ASSOC);
-$all_answers = $answers->getAllAnswers();
+// Récupérer tous les thèmes et questions
+try {
+    $all_topics = $db->query("SELECT id, name FROM topic")->fetchAll(PDO::FETCH_ASSOC);
+    $all_questions = $db->query("
+        SELECT questions.id, questions.question_txt, questions.topic_id, topic.name AS topic_name
+        FROM questions
+        JOIN topic ON questions.topic_id = topic.id
+    ")->fetchAll(PDO::FETCH_ASSOC);
+    $all_answers = $answers->getAllAnswers();
+} catch (PDOException $e) {
+    echo "<div class='error'>Erreur de base de données : " . $e->getMessage() . "</div>";
+}
 
-// Traitement des actions
+// Traitement des actions (CRUD)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
         $action = $_POST['action'];
 
         // Créer une question
         if ($action == 'create') {
-            $question->topic_id = $_POST['topic_id'];
-            $question->question_txt = $_POST['question_txt'];
+            $question->topic_id = filter_input(INPUT_POST, 'topic_id', FILTER_VALIDATE_INT);
+            $question->question_txt = htmlspecialchars(filter_input(INPUT_POST, 'question_txt', FILTER_SANITIZE_FULL_SPECIAL_CHARS));
 
             if ($question->create()) {
-                echo "<div class='success'>Question créée avec succès.</div>";
+                $last_question_id = $db->lastInsertId(); // Récupère l'ID de la question créée
+
+                // Ajouter les réponses
+                $answer_txts = $_POST['answer_txt'];
+                $is_trues = $_POST['is_true'];
+
+                foreach ($answer_txts as $index => $answer_txt) {
+                    $answers->question_id = $last_question_id;
+                    $answers->answer_txt = htmlspecialchars($answer_txt);
+                    $answers->is_true = isset($is_trues[$index]) ? 1 : 0;
+                    $answers->create();
+                }
+
+                echo "<div class='success'>Question et réponses créées avec succès.</div>";
             } else {
                 echo "<div class='error'>Erreur lors de la création de la question.</div>";
             }
@@ -40,9 +60,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Mettre à jour une question
         if ($action == 'update') {
-            $question->id = $_POST['id'];
-            $question->topic_id = $_POST['topic_id'];
-            $question->question_txt = $_POST['question_txt'];
+            $question->id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+            $question->topic_id = filter_input(INPUT_POST, 'topic_id', FILTER_VALIDATE_INT);
+            $question->question_txt = htmlspecialchars(filter_input(INPUT_POST, 'question_txt', FILTER_SANITIZE_FULL_SPECIAL_CHARS));
 
             if ($question->update()) {
                 echo "<div class='success'>Question mise à jour avec succès.</div>";
@@ -53,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Supprimer une question
         if ($action == 'delete') {
-            $question->id = $_POST['id'];
+            $question->id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
 
             if ($question->delete()) {
                 echo "<div class='success'>Question supprimée avec succès.</div>";
@@ -62,40 +82,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // Mettre à jour les réponses existantes
+        // Mettre à jour les réponses
         if ($action == 'update_answers') {
-            $question_id = $_POST['question_id'];
+            $question_id = filter_input(INPUT_POST, 'question_id', FILTER_VALIDATE_INT);
             $answer_ids = $_POST['answer_ids'];
             $answer_txts = $_POST['answer_txt'];
             $is_trues = $_POST['is_true'];
 
             foreach ($answer_ids as $index => $answer_id) {
-                $answers->id = $answer_id;
-                $answers->answer_txt = $answer_txts[$index];
-                $answers->is_true = $is_trues[$index];
+                $answers->id = filter_var($answer_id, FILTER_VALIDATE_INT);
+                $answers->answer_txt = htmlspecialchars($answer_txts[$index]);
+                $answers->is_true = isset($is_trues[$index]) ? 1 : 0;
                 $answers->update();
             }
             echo "<div class='success'>Réponses mises à jour avec succès.</div>";
-        }
-
-        // Ajouter une nouvelle réponse
-        if ($action == 'add_answer') {
-            $answers->question_id = $_POST['question_id'];
-            $answers->answer_txt = $_POST['answer_txt'];
-            $answers->is_true = $_POST['is_true'];
-
-            if ($answers->create()) {
-                echo "<div class='success'>Réponse ajoutée avec succès.</div>";
-            } else {
-                echo "<div class='error'>Erreur lors de l'ajout de la réponse.</div>";
-            }
         }
     }
 }
 
 // Supprimer une réponse (via GET)
 if (isset($_GET['delete_answer'])) {
-    $answers->id = $_GET['delete_answer'];
+    $answers->id = filter_input(INPUT_GET, 'delete_answer', FILTER_VALIDATE_INT);
 
     if ($answers->delete()) {
         echo "<div class='success'>Réponse supprimée avec succès.</div>";
@@ -103,11 +110,8 @@ if (isset($_GET['delete_answer'])) {
         echo "<div class='error'>Erreur lors de la suppression de la réponse.</div>";
     }
 }
-
-// Affichage des questions
-$stmt = $question->read();
-$questions = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -119,73 +123,41 @@ $questions = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
 <body>
     <main>
         <div class="container">
-            <h1>Gestion des questions</h1>
+            <h1>Tableau de bord des questionnaires</h1>
 
-            <!-- Section pour créer/modifier une question -->
-            <div class="form-container">
-                <h2><?php echo isset($_GET['edit']) ? 'Modifier une question' : 'Créer une question'; ?></h2>
-                <form method="post">
-                    <input type="hidden" name="action" value="<?php echo isset($_GET['edit']) ? 'update' : 'create'; ?>">
-                    <?php if (isset($_GET['edit'])) : ?>
-                        <input type="hidden" name="id" value="<?php echo $_GET['edit']; ?>">
-                    <?php endif; ?>
-                    <label>Thème :</label>
-                    <select name="topic_id" required>
+            <!-- Formulaire d'ajout de question avec réponses -->
+            <section>
+                <h2>Ajouter une nouvelle question avec des réponses</h2>
+                <form method="POST" action="">
+                    <input type="hidden" name="action" value="create">
+                    
+                    <!-- Sélection du thème -->
+                    <label for="topic_id">Thème :</label>
+                    <select name="topic_id" id="topic_id" required>
                         <option value="">Sélectionnez un thème</option>
                         <?php foreach ($all_topics as $topic) : ?>
-                            <option value="<?php echo $topic['id']; ?>" <?php echo (isset($_GET['edit']) && isset($questions[$_GET['edit'] - 1]) && $questions[$_GET['edit'] - 1]['topic_id'] == $topic['id']) ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($topic['name']); ?>
-                            </option>
+                            <option value="<?php echo $topic['id']; ?>"><?php echo htmlspecialchars($topic['name']); ?></option>
                         <?php endforeach; ?>
-                    </select>
-                    <label>Question :</label>
-                    <textarea name="question_txt" required><?php echo isset($_GET['edit']) ? $questions[$_GET['edit'] - 1]['question_txt'] : ''; ?></textarea>
-                    <button type="submit"><?php echo isset($_GET['edit']) ? 'Mettre à jour' : 'Créer'; ?></button>
+                    </select><br><br>
+
+                    <!-- Texte de la question -->
+                    <label for="question_txt">Texte de la question :</label>
+                    <textarea name="question_txt" id="question_txt" rows="4" cols="50" required></textarea><br><br>
+
+                    <!-- Réponses (4 champs fixes) -->
+                    <h3>Ajouter des réponses :</h3>
+                    <?php for ($i = 1; $i <= 4; $i++) : ?>
+                        <div class="answer">
+                            <label for="answer_txt<?php echo $i; ?>">Réponse <?php echo $i; ?> :</label>
+                            <input type="text" name="answer_txt[]" id="answer_txt<?php echo $i; ?>" required><br>
+                            <label for="is_true<?php echo $i; ?>">Est-ce la bonne réponse ?</label>
+                            <input type="checkbox" name="is_true[]" id="is_true<?php echo $i; ?>" value="1"><br><br>
+                        </div>
+                    <?php endfor; ?>
+                    
+                    <button type="submit">Ajouter la question et les réponses</button>
                 </form>
-            </div>
-
-            <!-- Section pour gérer les réponses (affichée uniquement en mode édition) -->
-            <?php if (isset($_GET['edit'])) : ?>
-                <div class="answers-container">
-                    <h3>Réponses existantes :</h3>
-                    <form method="post">
-                        <input type="hidden" name="action" value="update_answers">
-                        <input type="hidden" name="question_id" value="<?php echo $_GET['edit']; ?>">
-
-                        <?php foreach ($all_answers as $answer) : ?>
-                            <?php if ($answer['question_id'] == $_GET['edit']) : ?>
-                                <div class="answer-container">
-                                    <input type="hidden" name="answer_ids[]" value="<?php echo $answer['id']; ?>">
-                                    <label>Réponse :</label>
-                                    <input type="text" name="answer_txt[]" value="<?php echo htmlspecialchars($answer['answer_txt']); ?>" required>
-                                    <label>Est-ce la bonne réponse ?</label>
-                                    <select name="is_true[]">
-                                        <option value="0" <?php echo $answer['is_true'] == 0 ? 'selected' : ''; ?>>Non</option>
-                                        <option value="1" <?php echo $answer['is_true'] == 1 ? 'selected' : ''; ?>>Oui</option>
-                                    </select>
-                                    <button type="submit" formaction="?edit=<?php echo $_GET['edit']; ?>&delete_answer=<?php echo $answer['id']; ?>">Supprimer</button>
-                                </div>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-
-                        <button type="submit">Mettre à jour les réponses</button>
-                    </form>
-
-                    <h3>Ajouter une nouvelle réponse :</h3>
-                    <form method="post">
-                        <input type="hidden" name="action" value="add_answer">
-                        <input type="hidden" name="question_id" value="<?php echo $_GET['edit']; ?>">
-                        <label>Réponse :</label>
-                        <input type="text" name="answer_txt" required>
-                        <label>Est-ce la bonne réponse ?</label>
-                        <select name="is_true">
-                            <option value="0">Non</option>
-                            <option value="1">Oui</option>
-                        </select>
-                        <button type="submit">Ajouter</button>
-                    </form>
-                </div>
-            <?php endif; ?>
+            </section>
 
             <!-- Section pour afficher la liste des questions -->
             <div class="questions-container">
@@ -194,23 +166,43 @@ $questions = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Thème ID</th>
+                            <th>Thème</th>
                             <th>Question</th>
+                            <th>Réponses</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($questions as $q) : ?>
+                        <?php foreach ($all_questions as $q) : ?>
                             <tr>
                                 <td><?php echo $q['id']; ?></td>
-                                <td><?php echo $q['topic_id']; ?></td>
-                                <td><?php echo $q['question_txt']; ?></td>
+                                <td><?php echo htmlspecialchars($q['topic_name']); ?></td>
+                                <td><?php echo htmlspecialchars($q['question_txt']); ?></td>
+                                <td>
+                                    <ul>
+                                        <?php
+                                        // Récupère les réponses pour cette question
+                                        $answers_query = "SELECT * FROM answers WHERE question_id = ?";
+                                        $answers_stmt = $db->prepare($answers_query);
+                                        $answers_stmt->execute([$q['id']]);
+                                        $answers = $answers_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                        foreach ($answers as $answer) : ?>
+                                            <li>
+                                                <?php echo htmlspecialchars($answer['answer_txt']); ?>
+                                                <?php if ($answer['is_true']) : ?>
+                                                    <span style="color: green;">(Bonne réponse)</span>
+                                                <?php endif; ?>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </td>
                                 <td class="actions">
-                                    <a href="?edit=<?php echo $q['id']; ?>"><button class="edit">Modifier</button></a>
+                                    <a href="dashboard.php?edit=<?php echo $q['id']; ?>" class="edit">Modifier</a>
                                     <form method="post" style="display:inline;">
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="<?php echo $q['id']; ?>">
-                                        <button type="submit" class="delete">Supprimer</button>
+                                        <button type="submit" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette question ?');">Supprimer</button>
                                     </form>
                                 </td>
                             </tr>
@@ -218,6 +210,61 @@ $questions = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
                     </tbody>
                 </table>
             </div>
+
+            <!-- Modal pour modifier une question -->
+            <?php if (isset($_GET['edit'])) : ?>
+                <?php
+                $edit_id = $_GET['edit'];
+                // Récupère la question et ses réponses
+                $question_query = "SELECT * FROM questions WHERE id = ?";
+                $question_stmt = $db->prepare($question_query);
+                $question_stmt->execute([$edit_id]);
+                $question = $question_stmt->fetch();
+
+                if ($question) {
+                    $question_txt = $question['question_txt'];
+                    $topic_id = $question['topic_id'];
+
+                    // Récupère les réponses pour cette question
+                    $answers_query = "SELECT * FROM answers WHERE question_id = ?";
+                    $answers_stmt = $db->prepare($answers_query);
+                    $answers_stmt->execute([$edit_id]);
+                    $answers = $answers_stmt->fetchAll(PDO::FETCH_ASSOC);
+                }
+                ?>
+                <div id="editModal" class="modal" style="display:block;">
+                    <div class="modal-content">
+                        <a href="dashboard.php" class="close">×</a>
+                        <h2>Modifier une question</h2>
+                        <form method="post" action="dashboard.php">
+                            <input type="hidden" name="id" value="<?php echo $edit_id; ?>">
+                            <label>Thème :</label>
+                            <select name="topic_id" required>
+                                <?php foreach ($all_topics as $topic) : ?>
+                                    <option value="<?php echo $topic['id']; ?>" <?php echo $topic['id'] == $topic_id ? 'selected' : ''; ?>><?php echo $topic['name']; ?></option>
+                                <?php endforeach; ?>
+                            </select><br><br>
+                            <label>Question :</label>
+                            <textarea name="question_txt" required><?php echo htmlspecialchars($question_txt); ?></textarea><br><br>
+
+                            <!-- Section pour modifier les réponses -->
+                            <h3>Réponses :</h3>
+                            <?php foreach ($answers as $index => $answer) : ?>
+                                <div class="answer">
+                                    <label>Réponse <?php echo $index + 1; ?> :</label>
+                                    <input type="text" name="answer_txt[]" value="<?php echo htmlspecialchars($answer['answer_txt']); ?>" required><br>
+                                    <label>Est-ce la bonne réponse ?</label>
+                                    <input type="checkbox" name="is_true[]" value="1" <?php echo $answer['is_true'] ? 'checked' : ''; ?>><br><br>
+                                    <input type="hidden" name="answer_ids[]" value="<?php echo $answer['id']; ?>">
+                                </div>
+                            <?php endforeach; ?>
+
+                            <input type="hidden" name="action" value="update_answers">
+                            <button type="submit">Mettre à jour</button>
+                        </form>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
     </main>
 </body>
