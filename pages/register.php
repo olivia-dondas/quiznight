@@ -53,7 +53,7 @@ if (isset($_POST['submit'])) {
     <title>QuizNite - Inscription</title>
     <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="../styles/global.css">
-    <link rel="stylesheet" href="../styles/register.css">  
+    <link rel="stylesheet" href="../css/register.css">  
 </head>
 
 <body>
