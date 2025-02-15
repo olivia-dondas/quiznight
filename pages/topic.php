@@ -36,6 +36,60 @@ $answer = new Answers($pdo);
 foreach ($questions as &$q) {
     $q['answers'] = $answer->getAnswersByQuestionId($q['id']);
 }
+
+// Traitement du formulaire (quand l'utilisateur soumet les réponses)
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $score = 0;
+    $responses = [];
+
+    // Parcourir les questions et vérifier les réponses
+    foreach ($questions as $question) {
+        $questionId = $question['id'];
+        if (isset($_POST['question_' . $questionId])) {
+            $selected_answer_id = $_POST['question_' . $questionId];
+            
+            // Vérifier si la réponse est correcte
+            $true_answer = null;
+            foreach ($question['answers'] as $ans) {
+                if ($ans['is_true'] == 1) {
+                    $correct_answer = $ans;
+                    break;
+                }
+            }
+            
+            // Vérifier si la réponse sélectionnée est correcte
+            if ($correct_answer && $selected_answer_id == $correct_answer['id']) {
+                $score++;
+                $responses[$questionId] = [
+                    'question' => $question['question_txt'],
+                    'user_answer' => $selected_answer_id,
+                    'correct_answer' => $correct_answer['answer_txt'],
+                    'correct' => true
+                ];
+            } else {
+                $responses[$questionId] = [
+                    'question' => $question['question_txt'],
+                    'user_answer' => $selected_answer_id,
+                    'correct_answer' => $correct_answer ? $correct_answer['answer_txt'] : 'Aucune réponse correcte',
+                    'correct' => false
+                ];
+            }
+        }
+    }
+
+    // Affichage du score et des réponses
+    echo "<h2>Résultats du Quiz</h2>";
+    echo "<p>Score : $score / " . count($questions) . "</p>";
+
+    foreach ($responses as $response) {
+        echo "<div class='question-result'>";
+        echo "<h3>" . htmlspecialchars($response['question']) . "</h3>";
+        echo "<p><strong>Votre réponse :</strong> " . htmlspecialchars($response['user_answer']) . "</p>";
+        echo "<p><strong>Réponse correcte :</strong> " . htmlspecialchars($response['correct_answer']) . "</p>";
+        echo $response['correct'] ? "<p class='correct'>Correct!</p>" : "<p class='incorrect'>Incorrect!</p>";
+        echo "</div>";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -57,8 +111,8 @@ foreach ($questions as &$q) {
     </header>
 
     <section id="quiz">
-        <form action="submit_quiz.php" method="post">
-            <?php foreach ($questions as $question) : ?>
+        <form method="post" action="">
+            <?php foreach ($questions as $questionId => $question) : ?>
                 <div class="question">
                     <h3><?php echo htmlspecialchars($question['question_txt']); ?></h3>
                     <ul>
@@ -71,7 +125,7 @@ foreach ($questions as &$q) {
                     </ul>
                 </div>
             <?php endforeach; ?>
-            <button type="submit">Soumettre le Quiz</button>
+            <button type="submit">Soumettre les réponses</button>
         </form>
     </section>
 
