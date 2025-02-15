@@ -51,5 +51,42 @@ class Answers {
             die("Erreur lors de la récupération des réponses par question ID : " . $e->getMessage());
         }
     }
+
+
+    // Méthode pour mettre à jour une réponse
+    public function update() {
+        $query = "UPDATE " . $this->table . " SET answer_txt = :answer_txt, is_true = :is_true WHERE id = :id";
+        
+        $stmt = $this->conn->prepare($query);
+
+        // Liaison des paramètres
+        $stmt->bindParam(':answer_txt', $this->answer_txt);
+        $stmt->bindParam(':is_true', $this->is_true);
+        $stmt->bindParam(':id', $this->id);
+
+        // Exécution de la requête
+        if ($stmt->execute()) {
+            return true;
+        }
+        return false;
+    }
+
+    // Méthode pour supprimer une réponse
+    public function delete() {
+        $query = "DELETE FROM " . $this->table . " WHERE id = :id";
+        
+        $stmt = $this->conn->prepare($query);
+
+        // Liaison du paramètre
+        $stmt->bindParam(':id', $this->id);
+
+        // Exécution de la requête
+        if ($stmt->execute()) {
+            return true;
+        }
+        return false;
+    }
 }
+
+
 ?>
