@@ -1,89 +1,81 @@
-
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-$config = require('../config/config.php');
-var_dump($config);
+// Inclusion du fichier de configuration
+$config = require '../config/config.php';
 
 
+// Classe de gestion des utilisateurs
+class User {
+    private $pdo;
 
-if (isset($_POST['submit'])) {
-    try {
-        // Vérifier si les champs sont remplis
-        if (empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password'])) {
-            header("Location: connection.html?error=Tous les champs sont obligatoires !");
-            exit();
+    public function __construct($config) {
+        try {
+            // Connexion avec les paramètres du fichier config
+            $this->pdo = new PDO(
+                "mysql:host={$config['db_host']};dbname={$config['db_name']};charset=utf8mb4",
+                $config['db_user'],
+                $config['db_pass']
+            );
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            die("Erreur de connexion à la base de données : " . $e->getMessage());
+        }
+    }
+
+    // Fonction pour enregistrer un utilisateur
+    public function register($username, $password) {
+        // Vérification des champs vides
+        if (empty($username) || empty($password)) {
+            return "Veuillez remplir tous les champs.";
         }
 
-        // Connexion à la base de données
-        $pdo = new PDO("mysql:host=" . $config['db_host'] . ";dbname=" . $config['db_name'] . ";charset=utf8mb4", $config['db_user'], $config['db_pass']);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        // Hashage du mot de passe
+        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
-        // Hacher le mot de passe
-        $hashedPassword = password_hash($_POST['password'], PASSWORD_BCRYPT);
+        // Insertion dans la base de données
+        $sql = "INSERT INTO admin (username, password, created_at) VALUES (:username, :password, :created_at)";
+        $stmt = $this->pdo->prepare($sql);
 
-        // Préparer et exécuter la requête d'insertion
-        $query = $pdo->prepare("INSERT INTO users (username, password) VALUES (:username, :password)");
-        $query->bindValue(':username', $_POST['username'], PDO::PARAM_STR);
-        $query->bindValue(':password', $hashedPassword, PDO::PARAM_STR);
-
-        $query->execute();
-
-        // Redirection vers la page de connexion après inscription réussie
-        header("Location: login.php?success=Inscription réussie ! Vous pouvez maintenant vous connecter.");
-        exit();
-    } catch (PDOException $e) {
-        $_SESSION['error'] = "Erreur de base de données :" . $e->getMessage();
-        header("Location: login.php?error=Erreur de base de données: " . urlencode($e->getMessage()));
-        exit();
+        try {
+            $stmt->execute([
+                ':username' => $username,
+                ':password' => $hashed_password,
+                ':created_at' => date('Y-m-d H:i:s') // Date actuelle
+            ]);
+            return "Utilisateur enregistré avec succès !";
+        } catch (PDOException $e) {
+            return "Erreur lors de l'enregistrement : " . $e->getMessage();
+        }
     }
 }
 
+// Gestion du formulaire
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Création d'une instance de la classe User
+    $user = new User($config);
 
-
+    // Enregistrement de l'utilisateur
+    $message = $user->register($_POST['username'], $_POST['password']);
+    echo $message;
+}
 ?>
 
-
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuizNite - Inscription</title>
-    <link rel="icon" type="image/png" href="images/favicon.png">
-    <link rel="stylesheet" href="../styles/global.css">
-    <link rel="stylesheet" href="../css/register.css">  
+    <title>Enregistrement</title>
 </head>
-
 <body>
-    <header class="header">
-        <img src="images/logo.png" alt="logo" class="logo1">
-    </header>
-    <section class="allcontainer">
-        <aside class="logo2">
-            <img src="images/logo.png" alt="logo" class="logo2">
-        </aside>
-        <section class="container">
-            <h2>QuizNite</h2>
-            <h3>Inscription</h3>
+    <h2>Créer un compte</h2>
+    <form action="register.php" method="POST">
+        <label for="username">Nom d'utilisateur :</label>
+        <input type="text" name="username" id="username" required><br><br>
 
-            <?php
-            if (isset($_GET['error'])) {
-                echo '<p style="color: red;">' . htmlspecialchars($_GET['error']) . '</p>';
-            }
-            ?>
+        <label for="password">Mot de passe :</label>
+        <input type="password" name="password" id="password" required><br><br>
 
-            <form action="" method="POST">
-                <input type="text" name="username" placeholder="Nom" required>
-                <input type="password" name="password" placeholder="Mot de passe" required>
-                <button type="submit" name="submit">S'inscrire</button>
-                <p>Déjà inscrit ? <a href="login.php">Se connecter</a></p>
-            </form>
-        </section>
-    </section>
-    <footer class="footer">
-        <p>2025 - QuizNite by Olivia Dondas, Scott Allo & Théo Ferrete - Tous droits réservés</p>
-    </footer>
+        <button type="submit">S'enregistrer</button>
+    </form>
 </body>
 </html>
