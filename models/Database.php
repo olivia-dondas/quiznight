@@ -7,6 +7,9 @@ class Database {
     private $password = 'root';
     public $conn;
 
+    //  private $username = 'oliviadondas';
+   // private $password = 'kzCFKQbU3N@t9j7';
+
     public function getConnection() {
         $this->conn = null;
 

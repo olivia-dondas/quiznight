@@ -1,69 +1,76 @@
 <?php
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$config = require('../config/config.php'); 
-var_dump(file_exists('config/config.php'));  // Affiche true si le fichier existe
-// Connexion à la base de données avec PDO
-try {
-    $pdo = new PDO(
-        "mysql:host={$config['db_host']};dbname={$config['db_name']};charset=utf8mb4",
-        $config['db_user'],
-        $config['db_pass']
-    );
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "Connexion réussie à la base de données !\n";
-} catch (PDOException $e) {
-    die("Erreur de connexion : " . $e->getMessage());
-}
+require_once __DIR__ . '/../models/Database.php';
+require_once __DIR__ . '/../models/Quiz.php';
+require_once __DIR__ . '/../models/Answers.php';
 
-// Récupération des questions et des réponses associées
-$query = "
-    SELECT q.id AS question_id, q.question_txt, a.id AS answer_id, a.answer_txt, a.is_true
-    FROM questions q
-    JOIN answers a ON q.id = a.question_id
-    ORDER BY q.id
-";
-$stmt = $pdo->query($query);
+// Initialiser les objets des modèles
+$database = new Database();
+$db = $database->getConnection();
+$quiz = new Quiz($db);
+$answers = new Answers($db);
 
-$questions = [];
-while ($row = $stmt->fetch()) {
-    $questionId = $row['question_id'];
-    if (!isset($questions[$questionId])) {
-        $questions[$questionId] = [
-            'question' => $row['question_txt'],
-            'answers' => []
-        ];
-    }
-    $questions[$questionId]['answers'][] = [
-        'answer_id' => $row['answer_id'],
-        'answer_txt' => $row['answer_txt'],
-    ];
-}
+// Récupération des questions avec leurs réponses
+$questions = $quiz->getQuestionsWithAnswers();
 
-// Traitement de la soumission des réponses (si nécessaire)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $score = 0;
     $totalQuestions = count($questions);
+    $userAnswers = [];
 
-    foreach ($questions as $questionId => $question) {
-        $userAnswer = $_POST["question_$questionId"] ?? '';
+    foreach ($questions as $question) { // ✅ Utilisation correcte de la boucle
+        $questionId = $question['question_id']; // ✅ On récupère bien l'ID de la question
+        $userAnswerId = $_POST["question_$questionId"] ?? ''; // ✅ Récupération propre
+        $userAnswerTxt = 'Réponse non trouvée';
+        $correctAnswerTxt = '';
 
-        // Vérifier si la réponse est correcte
-        if ($userAnswer) {
-            $stmt = $pdo->prepare("SELECT is_true FROM answers WHERE id = ?");
-            $stmt->execute([$userAnswer]);
-            $isTrue = $stmt->fetchColumn();
-
-            if ($isTrue) {
-                $score++;
+        // Trouver le texte de la réponse choisie et vérifier la bonne réponse
+        foreach ($question['answers'] as $answer) {
+            if ($answer['answer_id'] == $userAnswerId) { 
+                $userAnswerTxt = $answer['answer_txt']; // ✅ Associe bien l'ID avec son texte
+            }
+            if ($answer['is_true']) {
+                $correctAnswerTxt = $answer['answer_txt']; // ✅ Trouve la réponse correcte
             }
         }
+
+        // Vérifier si l'utilisateur a donné la bonne réponse
+        if ($userAnswerTxt === $correctAnswerTxt) {
+            $score++;
+        }
+
+        // Stocker les résultats pour affichage après la boucle
+        $userAnswers[] = [
+            'question' => $question['question_txt'],
+            'user_answer' => $userAnswerTxt,
+            'correct_answer' => $correctAnswerTxt,
+            'is_true' => $userAnswerTxt === $correctAnswerTxt
+        ];
     }
 
-    // Affichage du score
+    // Affichage des résultats après la boucle
+    foreach ($userAnswers as $result) {
+        echo "<div class='quiz-results'>";
+        echo "<p><strong>Question :</strong> " . htmlspecialchars($result['question']) . "</p>";
+        echo "<p><strong>Votre réponse :</strong> " . htmlspecialchars($result['user_answer']) . "</p>";
+        echo "<p><strong>Réponse correcte :</strong> " . htmlspecialchars($result['correct_answer']) . "</p>";
+        if ($result['is_correct']) {
+            echo "<p class='correct'>Correct!</p>";
+        } else {
+            echo "<p class='incorrect'>Incorrect!</p>";
+        }
+        echo "</div>";
+    }
+
+    // Affichage du score final
     echo "<div class='result'>Votre score : $score / $totalQuestions</div>";
 }
+
+
+var_dump($_POST);
 ?>
 
 <!DOCTYPE html>
@@ -72,66 +79,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Night</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f8ff;
-            padding: 2rem;
-            margin: 0;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 2rem;
-        }
-        .question {
-            margin-bottom: 2rem;
-        }
-        .answers {
-            margin-top: 1rem;
-        }
-        button {
-            background-color: #007bff;
-            color: #ffffff;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 1rem;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .result {
-            font-size: 20px;
-            font-weight: bold;
-            text-align: center;
-            margin-top: 1rem;
-            color: #28a745;
-        }
-    </style>
+    <link rel="stylesheet" href="../css/quiz.css">
 </head>
 <body>
     <div class="container">
         <h1>Quiz Night</h1>
         <form method="POST" action="">
-            <?php foreach ($questions as $questionId => $question): ?>
+            <?php foreach ($questions as $question): ?>
                 <div class="question">
-                    <p><strong><?php echo htmlspecialchars($question['question']); ?></strong></p>
+                    <p><strong><?php echo htmlspecialchars($question['question_txt']); ?></strong></p>
                     <div class="answers">
                         <?php foreach ($question['answers'] as $answer): ?>
                             <label>
-                                <input type="radio" name="question_<?php echo $questionId; ?>" value="<?php echo $answer['answer_id']; ?>">
+                                <input type="radio" name="question_<?php echo $question['question_id']; ?>" value="<?php echo $answer['answer_id']; ?>">
                                 <?php echo htmlspecialchars($answer['answer_txt']); ?>
                             </label><br>
                         <?php endforeach; ?>
@@ -141,6 +101,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit">Soumettre les réponses</button>
         </form>
     </div>
-   
 </body>
 </html>
