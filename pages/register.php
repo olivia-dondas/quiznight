@@ -8,8 +8,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $database = new Database();
     $user = new User($database);
 
-    // Traitement de l'inscription
-    $message = $user->register($_POST['username'], $_POST['password']);
+    // Vérifier que les deux mots de passe correspondent
+    if ($_POST['password'] !== $_POST['confirm_password']) {
+        $message = "Les mots de passe ne correspondent pas.";
+    } else {
+        // Traitement de l'inscription
+        $message = $user->register($_POST['username'], $_POST['password']);
+
+        // Si l'inscription est réussie, redirection vers login.php
+        if ($message === "Inscription réussie") { // Ajuste selon ton message de succès
+            header("Location: login.php");
+            exit(); // Toujours mettre exit() après une redirection
+        }
+    }
 }
 ?>
 
@@ -30,6 +41,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <label for="password">Mot de passe :</label>
             <input type="password" name="password" id="password" required>
+
+            <label for="confirm_password">Confirmez le mot de passe :</label>
+            <input type="password" name="confirm_password" id="confirm_password" required>
 
             <button type="submit">S'enregistrer</button>
         </form>
