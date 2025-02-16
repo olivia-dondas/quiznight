@@ -1,151 +1,121 @@
+/* Style global */
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
+  font-family: "Roboto", sans-serif;
+  background: linear-gradient(135deg, #6e7dff, #ff62d2);
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   margin: 0;
-  padding: 0;
-}
-
-.allcontainer {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 100%;
-  padding: 20px;
-  box-sizing: border-box; /* Assure que le padding est inclus dans la largeur totale */
-  flex-wrap: wrap; /* Permet aux éléments de se déplacer sur la ligne suivante si nécessaire */
+  color: #fff;
 }
 
 .container {
-  background: white;
-  padding: 20px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 30px;
   width: 100%;
-  max-width: 300px;
+  max-width: 450px;
   text-align: center;
-  margin: 10px; /* Ajoute un espacement autour de chaque conteneur */
+  transition: transform 0.3s ease-in-out;
 }
 
-input {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-sizing: border-box; /* Assure que le padding est inclus dans la largeur totale */
-}
-
-button {
-  background-color: #101720;
-  color: white;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 100%;
-}
-
-button:hover {
-  background-color: rgb(240, 181, 221);
-}
-
-p {
-  margin-top: 15px;
-}
-
-a {
-  color: #101720;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-.logo1 {
-  text-align: center;
-  height: auto;
-  max-width: 120px;
-  margin-top: 0px;
-}
-
-.logo2 {
-  width: 100%;
-  max-width: 500px;
-  height: auto;
-  margin-left: 40px;
-}
-
-.h2 {
-  font-family: "patriot", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.header,
-.footer {
-  font-weight: 200;
-  font-style: normal;
-  width: 100%;
-  background-color: #e59710;
-  color: white;
-  text-align: center;
-  padding: 10px 0;
-  position: fixed;
-  left: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  box-sizing: border-box;
-  min-height: 60px;
-}
-
-.header {
-  top: 0;
-  height: 10vh;
-}
-
-.footer {
-  bottom: 0;
-  margin-top: 20px;
-  height: 25px;
+.container:hover {
+  transform: scale(1.05);
 }
 
 h2 {
-  font-family: Patriot;
-}
-/* Media Queries */
-@media (max-width: 768px) {
-  .allcontainer {
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-  }
-
-  .logo2 {
-    width: 80%;
-    margin: 20px 0;
-  }
+  margin-bottom: 20px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-@media (max-width: 480px) {
-  .container {
-    width: 90%;
-    margin: 10px auto;
-  }
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
 
-  .logo2 {
-    width: 100%;
-    margin: 10px 0;
-  }
+label {
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #444;
+  text-align: left;
+}
 
-  .header,
-  .footer {
-    padding: 10px 0;
+input {
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 2px solid #ddd;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+}
+
+input:focus {
+  border-color: #ff62d2;
+  box-shadow: 0 0 8px rgba(255, 98, 210, 0.8);
+}
+
+button {
+  background-color: #ff62d2;
+  color: white;
+  font-size: 16px;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: 600;
+}
+
+button:hover {
+  background-color: #f15bb5;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+.login-link {
+  margin-top: 20px;
+  font-size: 16px;
+  color: #333;
+}
+
+.login-link a {
+  color: #ff62d2;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease-in-out;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+  color: #f15bb5;
+}
+
+.message {
+  margin-top: 20px;
+  color: #ff4444;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
   }
+  100% {
+    opacity: 1;
+  }
+}
+
+.container {
+  animation: fadeIn 0.5s ease-in-out;
 }

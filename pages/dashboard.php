@@ -23,7 +23,6 @@ try {
         FROM questions
         JOIN topic ON questions.topic_id = topic.id
     ")->fetchAll(PDO::FETCH_ASSOC);
-    $all_answers = $answers->getAllAnswers();
 } catch (PDOException $e) {
     echo "<div class='error'>Erreur de base de données : " . $e->getMessage() . "</div>";
 }
@@ -32,29 +31,48 @@ try {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
         $action = $_POST['action'];
+        $errors = [];
 
         // Créer une question
         if ($action == 'create') {
             $question->topic_id = filter_input(INPUT_POST, 'topic_id', FILTER_VALIDATE_INT);
             $question->question_txt = htmlspecialchars(filter_input(INPUT_POST, 'question_txt', FILTER_SANITIZE_FULL_SPECIAL_CHARS));
 
-            if ($question->create()) {
-                $last_question_id = $db->lastInsertId(); // Récupère l'ID de la question créée
+            // Vérifier qu'au moins une réponse est correcte
+            $is_trues = $_POST['is_true'] ?? [];
+            $has_correct_answer = in_array(1, $is_trues);
 
-                // Ajouter les réponses
-                $answer_txts = $_POST['answer_txt'];
-                $is_trues = $_POST['is_true'];
+            if (!$has_correct_answer) {
+                $errors[] = "Au moins une réponse doit être marquée comme correcte.";
+            }
 
-                foreach ($answer_txts as $index => $answer_txt) {
-                    $answers->question_id = $last_question_id;
-                    $answers->answer_txt = htmlspecialchars($answer_txt);
-                    $answers->is_true = isset($is_trues[$index]) ? 1 : 0;
-                    $answers->create();
+            if (empty($question->question_txt)) {
+                $errors[] = "Le texte de la question est requis.";
+            }
+
+            if (empty($errors)) {
+                if ($question->create()) {
+                    $last_question_id = $db->lastInsertId();
+
+                    // Ajouter les réponses
+                    $answer_txts = $_POST['answer_txt'];
+                    foreach ($answer_txts as $index => $answer_txt) {
+                        $answers->question_id = $last_question_id;
+                        $answers->answer_txt = htmlspecialchars($answer_txt);
+                        $answers->is_true = isset($is_trues[$index]) ? 1 : 0;
+                        $answers->create();
+                    }
+
+                    echo "<div class='success'>Question et réponses créées avec succès.</div>";
+                } else {
+                    echo "<div class='error'>Erreur lors de la création de la question.</div>";
                 }
-
-                echo "<div class='success'>Question et réponses créées avec succès.</div>";
             } else {
-                echo "<div class='error'>Erreur lors de la création de la question.</div>";
+                echo "<div class='error'>";
+                foreach ($errors as $error) {
+                    echo "<p>$error</p>";
+                }
+                echo "</div>";
             }
         }
 
@@ -118,7 +136,7 @@ if (isset($_GET['delete_answer'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/dashboard.css">
-    <title>CRUD Questions</title>
+    <title>Gestionnaire de quiz</title>
 </head>
 <body>
     <main>
@@ -182,7 +200,7 @@ if (isset($_GET['delete_answer'])) {
                                     <ul>
                                         <?php
                                         // Récupère les réponses pour cette question
-                                        $answers_query = "SELECT * FROM answers WHERE question_id = ?";
+                                        $answers_query = "SELECT * FROM answers WHERE question_id = ? ORDER BY id";
                                         $answers_stmt = $db->prepare($answers_query);
                                         $answers_stmt->execute([$q['id']]);
                                         $answers = $answers_stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -191,7 +209,7 @@ if (isset($_GET['delete_answer'])) {
                                             <li>
                                                 <?php echo htmlspecialchars($answer['answer_txt']); ?>
                                                 <?php if ($answer['is_true']) : ?>
-                                                    <span style="color: green;">(Bonne réponse)</span>
+                                                    <span style="color: green;">(✅)</span>
                                                 <?php endif; ?>
                                             </li>
                                         <?php endforeach; ?>
@@ -226,7 +244,7 @@ if (isset($_GET['delete_answer'])) {
                     $topic_id = $question['topic_id'];
 
                     // Récupère les réponses pour cette question
-                    $answers_query = "SELECT * FROM answers WHERE question_id = ?";
+                    $answers_query = "SELECT * FROM answers WHERE question_id = ? ORDER BY id";
                     $answers_stmt = $db->prepare($answers_query);
                     $answers_stmt->execute([$edit_id]);
                     $answers = $answers_stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -261,6 +279,7 @@ if (isset($_GET['delete_answer'])) {
 
                             <input type="hidden" name="action" value="update_answers">
                             <button type="submit">Mettre à jour</button>
+                            <a href="dashboard.php" class="cancel-button">Annuler</a>
                         </form>
                     </div>
                 </div>
