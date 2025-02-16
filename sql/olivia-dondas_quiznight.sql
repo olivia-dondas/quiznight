@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : sam. 15 fév. 2025 à 11:57
+-- Généré le : sam. 15 fév. 2025 à 20:16
 -- Version du serveur : 8.0.40
 -- Version de PHP : 8.3.14
 
@@ -29,10 +29,10 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `admin` (
   `id` int NOT NULL,
-  `username` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `created_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `admin`
@@ -50,9 +50,9 @@ INSERT INTO `admin` (`id`, `username`, `password`, `created_at`) VALUES
 CREATE TABLE `answers` (
   `id` int NOT NULL,
   `question_id` int NOT NULL,
-  `answer_txt` varchar(255) NOT NULL,
+  `answer_txt` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `is_true` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `answers`
@@ -90,13 +90,7 @@ INSERT INTO `answers` (`id`, `question_id`, `answer_txt`, `is_true`) VALUES
 (29, 8, 'Michael Jackson', 1),
 (30, 8, 'Elvis Presley', 0),
 (31, 8, 'Prince', 0),
-(32, 8, 'Madonna', 0),
-(33, 9, 'Scott ', 1),
-(34, 9, 'Marvin', 0),
-(35, 9, 'Théo', 0),
-(36, 9, 'Théo', 0),
-(37, 9, 'Olive', 0),
-(38, 9, 'Olive', 0);
+(32, 8, 'Madonna', 0);
 
 -- --------------------------------------------------------
 
@@ -107,8 +101,8 @@ INSERT INTO `answers` (`id`, `question_id`, `answer_txt`, `is_true`) VALUES
 CREATE TABLE `questions` (
   `id` int NOT NULL,
   `topic_id` int NOT NULL,
-  `question_txt` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `question_txt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `questions`
@@ -122,8 +116,7 @@ INSERT INTO `questions` (`id`, `topic_id`, `question_txt`) VALUES
 (5, 3, 'Quel film a remporté l\'Oscar du meilleur film en 1994 ?'),
 (6, 3, 'Quel réalisateur a dirigé \"Inception\" ?'),
 (7, 4, 'Quel groupe a chanté \"Bohemian Rhapsody\" ?'),
-(8, 4, 'Qui est le roi de la pop ?'),
-(9, 1, 'qui est le champion de lancer de caca ?');
+(8, 4, 'Qui est le roi de la pop ?');
 
 -- --------------------------------------------------------
 
@@ -133,10 +126,10 @@ INSERT INTO `questions` (`id`, `topic_id`, `question_txt`) VALUES
 
 CREATE TABLE `topic` (
   `id` int NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `description` text NOT NULL,
-  `image` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `topic`
@@ -198,7 +191,7 @@ ALTER TABLE `answers`
 -- AUTO_INCREMENT pour la table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT pour la table `topic`
