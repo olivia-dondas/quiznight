@@ -1,62 +1,9 @@
 <?php
-// Inclusion du fichier de configuration
-$config = require '../config/config.php';
+
+require_once __DIR__ . '/../models/Database.php';
+require_once __DIR__ . '/../models/User.php';
 
 
-// Classe de gestion des utilisateurs
-class User {
-    private $pdo;
-
-    public function __construct($config) {
-        try {
-            // Connexion avec les paramètres du fichier config
-            $this->pdo = new PDO(
-                "mysql:host={$config['db_host']};dbname={$config['db_name']};charset=utf8mb4",
-                $config['db_user'],
-                $config['db_pass']
-            );
-            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            die("Erreur de connexion à la base de données : " . $e->getMessage());
-        }
-    }
-
-    // Fonction pour enregistrer un utilisateur
-    public function register($username, $password) {
-        // Vérification des champs vides
-        if (empty($username) || empty($password)) {
-            return "Veuillez remplir tous les champs.";
-        }
-
-        // Hashage du mot de passe
-        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-
-        // Insertion dans la base de données
-        $sql = "INSERT INTO admin (username, password, created_at) VALUES (:username, :password, :created_at)";
-        $stmt = $this->pdo->prepare($sql);
-
-        try {
-            $stmt->execute([
-                ':username' => $username,
-                ':password' => $hashed_password,
-                ':created_at' => date('Y-m-d H:i:s') // Date actuelle
-            ]);
-            return "Utilisateur enregistré avec succès !";
-        } catch (PDOException $e) {
-            return "Erreur lors de l'enregistrement : " . $e->getMessage();
-        }
-    }
-}
-
-// Gestion du formulaire
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Création d'une instance de la classe User
-    $user = new User($config);
-
-    // Enregistrement de l'utilisateur
-    $message = $user->register($_POST['username'], $_POST['password']);
-    echo $message;
-}
 ?>
 
 <!DOCTYPE html>
