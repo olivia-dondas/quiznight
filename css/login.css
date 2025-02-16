@@ -10,6 +10,12 @@ body {
   color: #fff;
 }
 
+.logo {
+  max-width: 100px !important;
+  height: auto !important;
+  display: block;
+  margin: 0 auto;
+}
 .container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -34,7 +40,7 @@ body {
 }
 
 .play-section {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(247, 59, 165, 0.481);
   border-radius: 15px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
@@ -45,7 +51,7 @@ body {
 }
 
 .play-section p {
-  color: #666;
+  color: #190e2598;
   margin-bottom: 20px;
 }
 

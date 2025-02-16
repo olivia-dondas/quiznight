@@ -27,16 +27,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accueil</title>
+    <title>QuizNite - Accueil</title>
     <link rel="stylesheet" href="../css/login.css"> 
+    <link rel="icon" type="image/png" href="../assets/Quiznite.png">
 </head>
 <body>
     <div class="container">
         <!-- Section Jouer -->
         <div class="play-section">
-            <h2>Jouer</h2>
+            <img src="../assets/Quiznite.png" alt="Logo" class="Logo">
             <p>Commencez à jouer dès maintenant sans créer de compte !</p>
             <button onclick="window.location.href='home.php'">Jouer</button>
+            
         </div>
 
         <!-- Section Connexion/Inscription -->
