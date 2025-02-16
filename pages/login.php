@@ -1,8 +1,25 @@
 <?php
-// Inclusion du fichier de configuration
+// Inclusion des fichiers nécessaires
 require_once __DIR__ . '/../models/Database.php';
-require_once __DIR__ . '/../models/User.php';
+require_once __DIR__ . '/../models/Admin.php';
 
+$message = '';
+
+// Vérification si le formulaire est soumis
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Création de l'instance de Database et User
+    $database = new Database();
+    $user = new User($database);
+
+    // Tentative de connexion
+    $message = $user->login($_POST['username'], $_POST['password']);
+    
+    // Si la connexion est réussie, rediriger vers database.php
+    if ($message === "Connexion réussie !") {
+        header("Location: dashboard.php");
+        exit();  // Important pour arrêter l'exécution du script après la redirection
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -10,129 +27,24 @@ require_once __DIR__ . '/../models/User.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .container {
-            display: flex;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            width: 80%;
-            max-width: 800px;
-        }
-
-        .play-section {
-            background-color:rgb(255, 255, 255);
-            color: white;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 40%;
-        }
-
-        .play-section h2 {
-            margin: 0;
-            font-size: 24px;
-        }
-
-        .play-section button {
-            background-color: #fa25cb;
-            border: none;
-            padding: 10px 20px;
-            font-size: 18px;
-            cursor: pointer;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-
-        .play-section button:hover {
-            background-color:rgb(50, 0, 230);
-        }
-
-        .login-section {
-            padding: 40px;
-            width: 60%;
-        }
-
-        .login-section h2 {
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-
-        .login-section form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .login-section label {
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .login-section input {
-            margin-bottom: 15px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .login-section button {
-            background-color: #fa25cb;
-            color: white;
-            border: none;
-            padding: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        .login-section button:hover {
-            background-color: #0056b3;
-        }
-
-        .register-button {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .register-button:hover {
-            background-color: #218838;
-        }
-
-        .message {
-            margin-top: 15px;
-            color: red;
-        }
-    </style>
+    <title>Accueil</title>
+    <link rel="stylesheet" href="../css/login.css"> 
 </head>
 <body>
     <div class="container">
+        <!-- Section Jouer -->
         <div class="play-section">
             <h2>Jouer</h2>
+            <p>Commencez à jouer dès maintenant sans créer de compte !</p>
             <button onclick="window.location.href='home.php'">Jouer</button>
         </div>
-        <div class="login-section">
-            <h2>Se connecter</h2>
+
+        <!-- Section Connexion/Inscription -->
+        <div class="auth-section">
+            <h2>Gestionnaire de Quiz</h2>
+            <p>Connectez-vous ou inscrivez-vous pour accéder au gestionnaire de quiz.</p>
+
+            <!-- Formulaire de connexion -->
             <form action="login.php" method="POST">
                 <label for="username">Nom d'utilisateur :</label>
                 <input type="text" name="username" id="username" required>
@@ -143,9 +55,12 @@ require_once __DIR__ . '/../models/User.php';
                 <button type="submit">Se connecter</button>
             </form>
 
-            <!-- Bouton "S'inscrire" -->
-            <button class="register-button" onclick="window.location.href='register.php'">S'inscrire</button>
+            <!-- Lien vers l'inscription -->
+            <p class="register-link">
+                Pas encore de compte ? <a href="register.php">S'inscrire</a>
+            </p>
 
+            <!-- Affichage des messages d'erreur ou de succès -->
             <?php if (!empty($message)) : ?>
                 <p class="message"><?php echo $message; ?></p>
             <?php endif; ?>

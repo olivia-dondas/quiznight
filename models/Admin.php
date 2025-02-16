@@ -1,10 +1,9 @@
 <?php
-require_once __DIR__ . '/../models/Database.php'; // Assure-toi que le chemin est correct
+require_once __DIR__ . '/../models/Database.php';
 
 class User {
     private $pdo;
 
-    // Constructeur qui reçoit une instance de Database
     public function __construct(Database $database) {
         $this->pdo = $database->getConnection();
     }
@@ -13,6 +12,17 @@ class User {
     public function register($username, $password) {
         if (empty($username) || empty($password)) {
             return "Veuillez remplir tous les champs.";
+        }
+
+        $username = trim(htmlspecialchars($username));
+
+        // Vérifier si l'utilisateur existe déjà
+        $sql = "SELECT id FROM admin WHERE username = :username";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':username' => $username]);
+
+        if ($stmt->fetch()) {
+            return "Ce nom d'utilisateur est déjà pris.";
         }
 
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
@@ -28,18 +38,23 @@ class User {
             ]);
             return "Utilisateur enregistré avec succès !";
         } catch (PDOException $e) {
-            return "Erreur lors de l'enregistrement : " . $e->getMessage();
+            return "Erreur lors de l'enregistrement.";
         }
     }
 
-    // Fonction de connexion d'un utilisateur
+    // Fonction de connexion
     public function login($username, $password) {
+        $username = trim(htmlspecialchars($username));
+
         $sql = "SELECT * FROM admin WHERE username = :username";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':username' => $username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user && password_verify($password, $user['password'])) {
+            session_start();
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
             return "Connexion réussie !";
         } else {
             return "Nom d'utilisateur ou mot de passe incorrect.";
@@ -50,6 +65,7 @@ class User {
 // Gestion de l'inscription et de l'authentification
 $message = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    session_start();
     $database = new Database();
     $user = new User($database);
 
@@ -59,5 +75,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $message = $user->login($_POST['username'], $_POST['password']);
     }
     echo $message;
+}
+
+// Vérification si le formulaire est soumis
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Création de l'instance de Database et User
+    $database = new Database();
+    $user = new User($database);
+
+    // Tentative de connexion
+    $message = $user->login($_POST['username'], $_POST['password']);
+    
+    // Si la connexion est réussie, rediriger vers database.php
+    if ($message === "Connexion réussie") {  // Assure-toi que ta méthode login retourne ce message ou un indicateur de succès
+        header("Location: database.php");
+        exit();  // Important pour arrêter l'exécution du script après la redirection
+    }
 }
 ?>
