@@ -1,0 +1,101 @@
+body {
+  font-family: "Roboto", sans-serif;
+  background: linear-gradient(135deg, #6e7dff, #ff62d2);
+  display: flex;
+  flex-direction: column; /* Placer les éléments les uns sous les autres */
+  align-items: center; /* Centrer horizontalement */
+  height: 100vh;
+  margin: 0;
+  color: #fff;
+}
+
+/* Limiter la taille des images */
+img {
+  max-width: 100%; /* S'assurer que l'image ne dépasse pas la largeur de son conteneur */
+  height: auto; /* Maintenir le ratio de l'image */
+  display: block; /* S'assurer que l'image est un bloc et ne déborde pas de son conteneur */
+  margin: 0 auto; /* Centrer l'image */
+}
+
+header {
+  display: flex;
+  align-items: center; /* Centrer les éléments horizontalement */
+  justify-content: center; /* Centrer les éléments horizontalement dans le header */
+  padding: 0;
+  margin: 0; /* Mettre la marge à zéro */
+  background: rgba(255, 255, 255, 0);
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  color: #f1f1f1;
+  text-align: center;
+  width: 100%; /* Assure que le header prend toute la largeur disponible */
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center; /* Centrer le logo horizontalement */
+  margin-bottom: 20px; /* Ajouter de l'espace sous le logo */
+}
+
+.logo {
+  max-width: 200px; /* Limite la taille du logo, ajuste selon ton besoin */
+  height: auto; /* Maintient le ratio de l'image */
+}
+
+.quiz-section {
+  padding: 20px;
+  margin: 20px;
+  background-color: rgba(252, 252, 252, 0.131);
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* Style des liens dans quiz-section */
+.quiz-section a {
+  display: inline-block;
+  padding: 12px 25px;
+  color: white;
+  background-color: #6e7dff;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.quiz-section a:hover {
+  background-color: #5a6bff;
+}
+
+@media (max-width: 768px) {
+  header {
+    text-align: center;
+    padding: 10px;
+    margin: 20px;
+  }
+
+  .quiz-section {
+    margin: 20px;
+    padding: 15px;
+  }
+
+  /* Redimensionner le logo sur mobile */
+  .logo {
+    max-width: 150px;
+  }
+
+  @media (max-width: 480px) {
+    body {
+      font-size: 14px;
+      padding: 10px;
+    }
+
+    .quiz-section {
+      flex-direction: column;
+      padding: 10px;
+    }
+  }
+}
