@@ -29,13 +29,13 @@ $topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
 
     <header>
-        <h1>Bienvenue sur QuizNight</h1>
-        <img src="../assets/QuizNite.jpeg" alt="Logo QuizNite">
-        <p>Testez vos connaissances sur différents thèmes et amusez-vous avec nos quiz interactifs !</p>
+        
+        <img src="../assets/QuizNite.png" alt="Logo" class="logo">
+   
     </header>
 
     <section id="topics" class="quiz-section">
-        <h2>Topics</h2>
+    
         <?php foreach ($topics as $topic) : ?>
             <div class="topic">
                 <h3><?php echo htmlspecialchars($topic['name']); ?></h3>
@@ -46,14 +46,6 @@ $topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <?php endforeach; ?>
     </section>
 
-    <nav>
-        <a href="./pages/admin.php">Admin</a>
-        <a href="./pages/login.php">Login</a>
-        <a href="/pages/quiz.php">Quiz</a>
-        <a href="./index.php">Accueil</a>
-        <a href="./register.php">Inscription pour admin</a>
-       
-    </nav>
 
 </body>
 

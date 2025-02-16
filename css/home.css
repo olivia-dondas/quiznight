@@ -1,128 +1,101 @@
 body {
-    font-family: "Poppins", sans-serif;
-    background-color: #26294e; 
-    color: #fffbfb; 
+  font-family: "Roboto", sans-serif;
+  background: linear-gradient(135deg, #6e7dff, #ff62d2);
+  display: flex;
+  flex-direction: column; /* Placer les éléments les uns sous les autres */
+  align-items: center; /* Centrer horizontalement */
+  height: 100vh;
+  margin: 0;
+  color: #fff;
 }
 
-h1, h2 {
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    color: #d40000; 
+/* Limiter la taille des images */
+img {
+  max-width: 100%; /* S'assurer que l'image ne dépasse pas la largeur de son conteneur */
+  height: auto; /* Maintenir le ratio de l'image */
+  display: block; /* S'assurer que l'image est un bloc et ne déborde pas de son conteneur */
+  margin: 0 auto; /* Centrer l'image */
 }
 
-p {
-    display: flex;
-    margin: auto;
-    padding: auto;
+header {
+  display: flex;
+  align-items: center; /* Centrer les éléments horizontalement */
+  justify-content: center; /* Centrer les éléments horizontalement dans le header */
+  padding: 0;
+  margin: 0; /* Mettre la marge à zéro */
+  background: rgba(255, 255, 255, 0);
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  color: #f1f1f1;
+  text-align: center;
+  width: 100%; /* Assure que le header prend toute la largeur disponible */
 }
 
-.header {
-    display: flex;
-    flex-direction: column; 
-    align-items: center; 
-    justify-content: center; 
-    padding: 20px 20px;
-    margin: 40px;
-    color: #f1f1f1;
-    text-align: center;
+.logo-container {
+  display: flex;
+  justify-content: center; /* Centrer le logo horizontalement */
+  margin-bottom: 20px; /* Ajouter de l'espace sous le logo */
 }
 
-header h1 {
-    font-size: 36px; 
-    margin-bottom: 10px; 
-}
-
-header p {
-    font-size: 18px; 
-}
-
-header img {
-    width: 50%; 
-    max-width: 300px; 
-    height: auto; 
-    margin-top: 15px; 
-    margin-bottom: 15px; 
-    margin-left: 800px;
+.logo {
+  max-width: 200px; /* Limite la taille du logo, ajuste selon ton besoin */
+  height: auto; /* Maintient le ratio de l'image */
 }
 
 .quiz-section {
-    padding: 20px;
-    margin: 40px;
-    background-color: rgb(92, 93, 94);
-    border-radius: 10px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-    text-align: center;
+  padding: 20px;
+  margin: 20px;
+  background-color: rgba(252, 252, 252, 0.131);
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
 }
 
-.quiz-section h2 {
-    margin-bottom: 10px;
-    color: #ebedf3; 
-}
-
-.quiz-section p {
-    margin-bottom: 20px;
-    color: #f3ebeb; 
-}
-
+/* Style des liens dans quiz-section */
 .quiz-section a {
-    display: inline-block;
-    padding: 10px 20px;
-    color: white;
-    background-color: #1E2A47; 
-    border-radius: 5px;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
+  display: inline-block;
+  padding: 12px 25px;
+  color: white;
+  background-color: #6e7dff;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .quiz-section a:hover {
-    background-color: #00bcd4; 
+  background-color: #5a6bff;
 }
 
-nav a {
-    margin: 0 15px;
-    color: #1E2A47; 
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s ease, border-bottom 0.3s ease;
-}
+@media (max-width: 768px) {
+  header {
+    text-align: center;
+    padding: 10px;
+    margin: 20px;
+  }
 
-nav a:hover {
-    color: #00bcd4; 
-    border-bottom: 2px solid #00bcd4; 
-}
+  .quiz-section {
+    margin: 20px;
+    padding: 15px;
+  }
 
-.quiz-section img {
-    width: 80%; 
-    max-width: 400px; 
-    height: auto;
-    margin-bottom: 15px; 
-}
+  /* Redimensionner le logo sur mobile */
+  .logo {
+    max-width: 150px;
+  }
 
-@media (min-width: 916px) {
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+  @media (max-width: 480px) {
+    body {
+      font-size: 14px;
+      padding: 10px;
     }
 
-    nav {
-        display: flex;
+    .quiz-section {
+      flex-direction: column;
+      padding: 10px;
     }
-}
-
-@media only screen and (max-width: 915px) {
-    .header {
-        text-align: center;
-    }
-
-    nav {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    nav a {
-        margin: 10px 0;
-    }
+  }
 }
