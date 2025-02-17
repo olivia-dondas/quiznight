@@ -51,7 +51,7 @@ Quiz Night est une plateforme web qui permet aux administrateurs de créer et g�
 ## Installation 💻
 1. **Cloner le dépôt**
    ```sh
-   git clone https://github.com/votre-utilisateur/quiznight.git
+   git clone https://github.com/olivia-dondas/quiznight.git
    ```
 2. **Configurer la base de données**
    - Importer le fichier SQL situé dans le dossier `/sql` dans phpMyAdmin.
