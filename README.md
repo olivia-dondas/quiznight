@@ -13,6 +13,7 @@ Quiz Night est une plateforme web qui permet aux administrateurs de créer et g�
 - **Back-end :** PHP (Programmation Orientée Objet) 🖥️
 - **Base de données :** MySQL (via phpMyAdmin) 🛂
 - **Front-end :** HTML, CSS 🎨
+- **Hébergement :** Plesk 🛏️
 
 ## Structure du dépôt 📚
 ```
@@ -29,7 +30,7 @@ Quiz Night est une plateforme web qui permet aux administrateurs de créer et g�
 │── /models         → Classes qui gèrent la BDD
 │   ├── Admin.php
 │   ├── Answers.php
-│   ├── Database.php
+│   ├── Database.php → Gestion de la connexion à la BDD
 │   ├── Questions.php
 │   ├── Quiz.php
 │   ├── Topic.php
@@ -54,7 +55,7 @@ Quiz Night est une plateforme web qui permet aux administrateurs de créer et g�
    ```
 2. **Configurer la base de données**
    - Importer le fichier SQL situé dans le dossier `/sql` dans phpMyAdmin.
-   - Mettre à jour les informations de connexion à la BDD dans `/config/config.php`.
+   - Mettre à jour les informations de connexion à la BDD dans `/models/Database.php`.
 3. **Démarrer le projet**
    - Héberger les fichiers sur Plesk ou un serveur local (XAMPP, WAMP, MAMP).
    - Accéder à `http://localhost/quiznight/public` pour commencer. 🚀
