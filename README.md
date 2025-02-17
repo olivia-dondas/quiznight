@@ -1,6 +1,6 @@
-# Quiz Night 🎉🧠✨
+# Quiz Night 🎡🧠✨
 
-## Description 📜
+## Description 🐜
 Quiz Night est une plateforme web qui permet aux administrateurs de créer et gérer des quiz. Les utilisateurs peuvent accéder aux quiz créés et y participer. Ce projet a pour but de proposer un outil intuitif et efficace pour organiser des sessions de quiz en ligne. 🎯
 
 ## Fonctionnalités 🚀
@@ -11,29 +11,40 @@ Quiz Night est une plateforme web qui permet aux administrateurs de créer et g�
 
 ## Technologies utilisées 🛠️
 - **Back-end :** PHP (Programmation Orientée Objet) 🖥️
-- **Base de données :** MySQL (via phpMyAdmin) 🗄️
+- **Base de données :** MySQL (via phpMyAdmin) 🛂
 - **Front-end :** HTML, CSS 🎨
 
-## Structure du dépôt 📂
+## Structure du dépôt 📚
 ```
 /quiznight
-│── /public          → Fichiers accessibles (point d'entrée)
-│   ├── index.php    → Page d'accueil
-│   ├── admin.php    → Page admin
-│   ├── login.php    → Page de connexion
-│   ├── quiz.php     → Page pour voir un quiz
-│── /models          → Classes qui gèrent la BDD
-│   ├── Database.php → Connexion à la BDD
-│   ├── User.php     → Classe User (admins & joueurs)
-│   ├── Quiz.php     → Classe Quiz
-│── /css             → Fichiers CSS 🎨
-│   ├── styles.css   → Feuille de style
-    ├── global.css   → Feuille de style commune à toutes les pages du site
-│── /sql             → Script pour créer la base de données 🗄️
-│   ├── database.sql
-│── /config          → Fichiers de configuration ⚙️
-│   ├── config.php   → Configuration de la base de données
-│── README.md        → Explication du projet 📖
+│── /assets         → Contient les ressources graphiques
+│   ├── /topics      → Dossier des images de thèmes
+│   ├── QuizNite.png → Logo du projet
+│── /css            → Fichiers CSS 🎨
+│   ├── dashboard.css
+│   ├── home.css
+│   ├── login.css
+│   ├── register.css
+│   ├── topics.css
+│── /models         → Classes qui gèrent la BDD
+│   ├── Admin.php
+│   ├── Answers.php
+│   ├── Database.php
+│   ├── Questions.php
+│   ├── Quiz.php
+│   ├── Topic.php
+│── /pages          → Fichiers accessibles (point d'entrée)
+│   ├── dashboard.php
+│   ├── home.php
+│   ├── login.php
+│   ├── register.php
+│   ├── topic.php
+│── /sql            → Script pour créer la base de données 🛂
+│   ├── olivia-dondas_quiznight.sql
+│── /test           → Contient les fichiers de test
+│── .gitignore      → Fichier de configuration Git
+│── index.php       → Point d'entrée principal
+│── README.md       → Explication du projet 📚
 ```
 
 ## Installation 💻
@@ -55,6 +66,4 @@ Quiz Night est une plateforme web qui permet aux administrateurs de créer et g�
 
 ## Auteurs ✍️
 Projet développé par **Olivia, Scott et Théo**.
-
-
 
